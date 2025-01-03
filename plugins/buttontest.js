@@ -1,5 +1,5 @@
 const { cmd } = require('../command');
-const { Button, ButtonType } = require('@whiskeysockets/baileys'); // Import Button feature
+const { Button } = require('@whiskeysockets/baileys'); // Import Button feature
 
 const pdfUrl = "https://i.ibb.co/tC37Q7B/20241220-122443.jpg";
 
@@ -20,21 +20,21 @@ cmd({
         const endTime = Date.now();
         const ping = endTime - startTime;
 
-        // Create buttons for different menu sections
+        // Create buttons for different menu sections (using simple button objects)
         const buttons = [
-            { buttonId: 'downloadmenu', buttonText: { displayText: 'Download Menu' }, type: ButtonType.REPLY },
-            { buttonId: 'mainmenu', buttonText: { displayText: 'Main Menu' }, type: ButtonType.REPLY },
-            { buttonId: 'groupmenu', buttonText: { displayText: 'Group Menu' }, type: ButtonType.REPLY },
-            { buttonId: 'ownermenu', buttonText: { displayText: 'Owner Menu' }, type: ButtonType.REPLY },
-            { buttonId: 'convertmenu', buttonText: { displayText: 'Convert Menu' }, type: ButtonType.REPLY },
-            { buttonId: 'searchmenu', buttonText: { displayText: 'Search Menu' }, type: ButtonType.REPLY },
+            { buttonId: 'downloadmenu', buttonText: { displayText: 'Download Menu' }, type: 1 },
+            { buttonId: 'mainmenu', buttonText: { displayText: 'Main Menu' }, type: 1 },
+            { buttonId: 'groupmenu', buttonText: { displayText: 'Group Menu' }, type: 1 },
+            { buttonId: 'ownermenu', buttonText: { displayText: 'Owner Menu' }, type: 1 },
+            { buttonId: 'convertmenu', buttonText: { displayText: 'Convert Menu' }, type: 1 },
+            { buttonId: 'searchmenu', buttonText: { displayText: 'Search Menu' }, type: 1 },
         ];
 
         const menuMessage = `
 💚 *𝗗𝗶𝗱𝘂𝗹𝗮 𝗠𝗗 𝗠𝗲𝗻𝘂: 📥*
 
 🔱 𝗢𝘄𝗻𝗲𝗿 - 𝗗𝗶𝗱𝘂𝗹𝗮 𝗥𝗮𝘀𝗵𝗺𝗶𝗸𝗮  
-‼️ 𝗛𝗲𝗹𝗽 𝗗𝗲𝘃 - 𝗖𝘆𝗯𝗲𝗿 𝗝𝗮𝗻𝗶𝘆𝗮  
+‼️ 𝗛𝗲𝗹𝗽 𝗗𝗲𝗩 - 𝗖𝘆𝗯𝗲𝗿 𝗝𝗮𝗻𝗶𝘆𝗮  
 📥 𝗖𝗼𝗻𝘁𝗮𝗰𝘁 - 94771820962  
 
 ────────────────────  
@@ -83,7 +83,7 @@ cmd({
             image: { url: 'https://i.ibb.co/tC37Q7B/20241220-122443.jpg' },
             pageCount: 2024,
             caption: menuMessage,
-            contextInfo: {
+                        contextInfo: {
                 forwardingScore: 999,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
