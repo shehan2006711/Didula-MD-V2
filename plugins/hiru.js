@@ -1,16 +1,17 @@
+
 const { cmd } = require('../command'); // Adjust based on your command handling system
 const axios = require("axios");
 const nexara = require("@dark-yasiya/nexara");
 require("dotenv").config();
 const CREATOR = "Dark Yasiya";
 
-// Function to fetch the latest news from Hirunews
-async function hirunewsList() {
+// Function to fetch the latest local news from Hirunews
+async function hirunewsLocalList() {
     try {
-        const $ = await nexara("https://www.hirunews.lk/");
+        const $ = await nexara("https://www.hirunews.lk/local-news.php?pageID=1");
         const news = [];
 
-        // Update selectors to fetch correct news items
+        // Update selectors to fetch the correct local news items
         $("div.card").each((i, el) => {
             const title = $(el).find("h5.card-title > a").text().trim();
             const desc = $(el).find("p.card-text").text().trim();
@@ -26,30 +27,30 @@ async function hirunewsList() {
         });
 
         if (news.length === 0) {
-            throw new Error("No News found.");
+            throw new Error("No Local News found.");
         }
 
         return { data: news };
     } catch (error) {
         console.error(error);
-        throw new Error("Error fetching news: " + error.message);
+        throw new Error("Error fetching local news: " + error.message);
     }
 }
 
-// Command to handle the Hirunews request
+// Command to handle the Hirunews local news request
 cmd({
-    pattern: "hirunews",
-    alias: ["hirunews"],
-    desc: "Get the latest Hirunews.",
+    pattern: "hirulocal",
+    alias: ["hirulocalnews"],
+    desc: "Get the latest local news from Hirunews.",
     category: "News",
     react: "📰",
-    use: '.hirunews',
+    use: '.hirulocal',
     filename: __filename
 }, async (conn, mek, m, { from, reply }) => {
     try {
-        reply("Fetching the latest Hirunews...");
+        reply("Fetching the latest local news from Hirunews...");
 
-        const list = await hirunewsList();
+        const list = await hirunewsLocalList();
         const latestNews = list.data[0]; // Get the first news item
 
         const newsMessage = `
