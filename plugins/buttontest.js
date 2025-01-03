@@ -4,7 +4,7 @@ const { Button, ButtonType } = require('@whiskeysockets/baileys'); // Import But
 const pdfUrl = "https://i.ibb.co/tC37Q7B/20241220-122443.jpg";
 
 cmd({
-    pattern: "menu",
+    pattern: "menu2",
     desc: "Check commands.",
     category: "main",
     react: "✅",
