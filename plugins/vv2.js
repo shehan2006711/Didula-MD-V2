@@ -66,7 +66,7 @@ Kiyumi👘 Powered by:_ *©️TIKU_BOTS*`);
 //---------------------------------------------------------------------------
 
 cmd({
-  pattern: "vv",
+  pattern: "vv2",
   alias: ['viewonce', 'retrive'],
   react: "🎭",
   desc: "Flips given text.",
