@@ -1,104 +1,184 @@
+const {
+  fetchJson
+} = require('../lib/functions')
+const config = require('../config')
+const {
+  cmd,
+  commands
+} = require('../command')
+const yts = require('yt-search')
 
-const { cmd } = require('../command'); // Ensure the path is correct
-const { fetchJson } = require('../lib/functions'); // Ensure the path is correct
-const axios = require('axios');
-const mimeTypes = require('mime-types');
-
-const apilink = 'https://api.giftedtech.my.id/api/download/dlmp3?apikey=gifted&url='; // Updated API LINK
-
-cmd({
-    pattern: "ytmp3",
-    alias: ["ytmp3dl", "ytmp4"],
-    react: "🎥",
-    desc: "Download YouTube videos or audio",
-    category: "download",
-    use: '.ytdl <YouTube URL>',
-    filename: __filename
-}, async (conn, mek, m, { from, quoted, reply, q }) => {
+cmd( {
+  pattern: "song",
+  react: "🎵",
+  desc: "Download songs",
+  category: "download",
+  filename: __filename
+},
+  async (conn, mek, m, {
+    from, q, reply
+  }) => {
     try {
-        if (!q) {
-            return await reply("⚠️ Please provide a YouTube video URL!");
-        }
+      if (!q) return reply('⛔please give a song title')
+      const search = await yts(q);
+      const data = search.videos[0];
+      const url = data.url;
+      const formatViews = views => views >= 1_000_000_000 ? `${(views / 1_000_000_000).toFixed(1)}B`: views >= 1_000_000 ? `${(views / 1_000_000).toFixed(1)}M`: views >= 1_000 ? `${(views / 1_000).toFixed(1)}K`: views.toString();
+      let desc = `
+ *🎶Didula MD V2 💚 SONG🎵*
+ 🤠 *Title:* ${data.title}
+ 👤 *chenel:* ${data.author.name}
+ 📝 *Description:* ${data.description}
+⏰ *Time:* ${data.timestamp}
+⏱️ *Ago:* ${data.ago}
+👁 *Views:* ${formatViews(data.views)}
 
-        // Validate YouTube URL (basic check)
-        const isValidUrl = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/.test(q);
-        if (!isValidUrl) {
-            return await reply("⚠️ Please provide a valid YouTube video URL!");
-        }
+🔢 reply numbers
+ *1* audio🎶
+ *2* documents 📂
+> Didula MD V2 💚 `;
+      const or = await conn.sendMessage(from, {
+        image: {
+          url: data.thumbnail
+        }, caption: desc
+      }, {
+        quoted: mek
+      });
 
-        const ytdl_info = await fetchJson(`${apilink}${encodeURIComponent(q)}`);
+      const data1 = await fetchJson(`https://apitest1-f7dcf17bd59b.herokuapp.com/download/ytmp3?url=${url}`)
+      //========
 
-        // Check if the API response is successful
-        if (!ytdl_info.success) {
-            return await reply("🚫 No results found or an error occurred!");
-        }
+      conn.ev.on('messages.upsert', async (msgUpdate) => {
+        const msg = msgUpdate.messages[0];
+        if (!msg.message || !msg.message.extendedTextMessage) return;
 
-        const audioInfo = ytdl_info.result;
+        const selectedOption = msg.message.extendedTextMessage.text.trim();
 
-        // Prepare the message
-        const msg = `
-            *YouTube Downloader* 🎥
-
-            • *Title* - ${audioInfo.title}
-            • *Quality* - ${audioInfo.quality}
-            • *Download Link (MP3)* - [Click Here](${audioInfo.download_url})
-
-            *© Projects of Didula Rashmika*`;
-
-        // Sending the message with details
-        await conn.sendMessage(from, {
-            text: msg,
-            contextInfo: {
-                forwardingScore: 999,
-                isForwarded: true,
-                externalAdReply: {
-                    title: `YouTube Downloader`,
-                    body: `Download your favorite YouTube videos easily!`,
-                    thumbnailUrl: audioInfo.thumbail,
-                    sourceUrl: q,
-                    mediaType: 1,
-                    renderLargerThumbnail: true
-                }
+        if (msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.stanzaId === or.key.id) {
+          switch (selectedOption) {
+            case '1':
+              await conn.sendMessage(from, {
+                audio: {
+                  url: data1.result.dl_link
+                }, mimetype: "audio/mpeg"
+              }, {
+                quoted: mek
+              });
+              await conn.sendMessage(from, {
+                react: {
+                  text: '✔️', key: mek.key
+                }})
+              break
+            case '2':
+              await conn.sendMessage(from, {
+                document: {
+                  url: data1.result.dl_link
+                }, mimetype: "audio/mpeg", fileName: `${data.title}.mp3`, caption: "> Didula MD V2 💚 "
+              }, {
+                quoted: mek
+              });
+              await conn.sendMessage(from, {
+                react: {
+                  text: '✔️', key: mek.key
+                }})
+              break
+            default:
+              reply("Invalid option. Please select a valid option🔴");
             }
-        }, { quoted: mek });
+          }
+        })
 
-        // Downloading the MP3 file
-        const res = await axios.get(audioInfo.download_url, { 
-            responseType: 'arraybuffer',
-            timeout: 15000 // Set a timeout of 15 seconds
+      } catch (e) {
+        console.log(e);
+        reply(`Error: ${e}`);
+      }
+    });
+
+  //video ===================
+
+  cmd( {
+    pattern: "video",
+    react: "📽️",
+    desc: "Download songs",
+    category: "download",
+    filename: __filename
+  },
+    async (conn, mek, m, {
+      from,
+      q,
+      reply
+    }) => {
+      try {
+        if (!q) return reply('⛔please give a video title')
+        const search = await yts(q);
+        const data = search.videos[0];
+        const url = data.url;
+        const formatViews = views => views >= 1_000_000_000 ? `${(views / 1_000_000_000).toFixed(1)}B`: views >= 1_000_000 ? `${(views / 1_000_000).toFixed(1)}M`: views >= 1_000 ? `${(views / 1_000).toFixed(1)}K`: views.toString();
+        let dec = `
+*📽️Didula MD V2 💚🎞️*
+🤠 *Title:* ${data.title}
+👤 *chenel:* ${data.author.name}
+📝 *Description:* ${data.description}
+⏰ *Time:* ${data.timestamp}
+⏱️ *Ago:* ${data.ago}
+👁 *Views:* ${formatViews(data.views)}
+
+🔢 reply numbers
+*1* video📽️
+*2* documents 📂
+> Didula MD V2 💚 `;
+
+        const or = await conn.sendMessage(from, {
+          image: {
+            url: data.thumbnail
+          }, caption: dec
+        }, {
+          quoted: mek
         });
+        const data1 = await fetchJson(`https://api.giftedtech.my.id/api/download/dlmp4?apikey=gifted&url=${url}`)
 
-        // Get MIME type and extension
-        const mime = res.headers['content-type'] || 'application/octet-stream';
-        const extension = mimeTypes.extension(mime) || 'unknown';
 
-        // Get file size from headers
-        const fileSize = parseInt(res.headers['content-length']) || 0;
-        const maxFileSize = 10 * 1024 * 1024; // 10 MB
+        conn.ev.on('messages.upsert', async (msgUpdate) => {
+          const msg = msgUpdate.messages[0];
+          if (!msg.message || !msg.message.extendedTextMessage) return;
 
-        if (fileSize > maxFileSize) {
-            return reply('❗ File is too large to upload (limit: 10MB).');
-        }
+          const selectedOption = msg.message.extendedTextMessage.text.trim();
 
-        // Define file name
-        const fileName = `${audioInfo.title}.mp3`; // Change file name to audio title
-
-        // Send the file as a document
-        await conn.sendMessage(
-            from,
-            {
-                document: { url: audioInfo.download_url },
-                caption: `Here is your downloaded file: ${audioInfo.title}`,
-                mimetype: mime,
-                fileName: fileName
-            },
-            { quoted: mek }
-        );
-
-    } catch (error) {
-        // Handle errors gracefully
-        console.error(error);
-        reply(`❌ Error: ${error.response ? error.response.data : error.message}`);
-    }
-});
-
+          if (msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.stanzaId === or.key.id) {
+            switch (selectedOption) {
+            case '1':
+              await conn.sendMessage(from, {
+                audio: {
+                  url: data1.result.download_url
+                }, mimetype: "video/mp4"
+              }, {
+                quoted: mek
+              });
+              await conn.sendMessage(from, {
+                react: {
+                  text: '✔️', key: mek.key
+                }})
+              break
+            case '2':
+              await conn.sendMessage(from, {
+                document: {
+                  url: data1.result.download_url
+                }, mimetype: "video/mp4", fileName: `${data.title}.mp4`, caption: "> Didula MD V2 💚 "
+              }, {
+                quoted: mek
+              });
+              await conn.sendMessage(from, {
+                react: {
+                  text: '✔️', key: mek.key
+                }})
+              break
+            default:
+              reply("Invalid option. Please select a valid option🔴");
+            }
+          }
+        })
+      } catch (e) {
+        console.log(e);
+        reply(`Error: ${e}`);
+      }
+    });
