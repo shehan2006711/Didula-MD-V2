@@ -1,12 +1,8 @@
-
 const axios = require('axios');
 const { sck1, tiny, fancytext, listall, cmd, ffmpeg } = require('../lib/');
 const fs = require('fs-extra');
 const { exec } = require('child_process');
 const { Sticker, createSticker, StickerTypes } = require("wa-sticker-formatter");
-
-
-
 //---------------------------------------------------------------------------
 
 cmd({
@@ -30,7 +26,11 @@ async (Void, citel, text) => {
     if (mime == "imageMessage" || mime == "stickerMessage") {
       let media = await Void.downloadAndSaveMediaMessage(citel.quoted);
       let name = await getRandom('.png');
-      exec(`ffmpeg -i ${media} ${name}`, (err) => {
+      exec(`ffmpeg -i ${media} ${name}`, (err, stdout, stderr) => {
+        if (err) {
+          console.error('FFMPEG Error:', err);
+          return citel.reply("There was an error converting the sticker.");
+        }
         let buffer = fs.readFileSync(media);
         Void.sendMessage(citel.chat, { image: buffer }, { quoted: citel });
 
@@ -46,20 +46,7 @@ async (Void, citel, text) => {
       return citel.reply("```Uhh Please, reply to a non-animated sticker.```");
     }
   } else {
-    return citel.reply(`⚠️WARNING⚠️*
-  
-_Don't text the Bot in pm._
-
-*㊙️If you want to add this bot in your GC(GroupChat) then ask the Developer*
-
-*〽️Developer:*
-• https://wa.me/+917086726371
-
-*📛Our official Support GC: https://chat.whatsapp.com/J66CTiDheI94vkxx6nIyp2*
-
-*💗Have a nice day💗*
-
-Kiyumi👘 Powered by:_ *©️TIKU_BOTS*`);
+    return citel.reply(`⚠️ You can only use this command in a group chat.`);
   }
 });
 
@@ -78,37 +65,26 @@ async (Void, citel, text) => {
   // Check if the command is being used in a group chat
   if (citel.isGroup) {
     try {
-      const quot = citel.msg.contextInfo.quotedMessage.viewOnceMessageV2;
-      if (quot) {
-        if (quot.message.imageMessage) {
-          let cap = quot.message.imageMessage.caption;
-          let anu = await Void.downloadAndSaveMediaMessage(quot.message.imageMessage);
-          return Void.sendMessage(citel.chat, { image: { url: anu }, caption: cap });
-        }
-        if (quot.message.videoMessage) {
-          let cap = quot.message.videoMessage.caption;
-          let anu = await Void.downloadAndSaveMediaMessage(quot.message.videoMessage);
-          return Void.sendMessage(citel.chat, { video: { url: anu }, caption: cap });
-        }
+      const quot = citel.msg.contextInfo?.quotedMessage?.viewOnceMessageV2;
+      if (!quot) return citel.reply("No ViewOnce message found.");
+      
+      if (quot.message.imageMessage) {
+        let cap = quot.message.imageMessage.caption;
+        let anu = await Void.downloadAndSaveMediaMessage(quot.message.imageMessage);
+        return Void.sendMessage(citel.chat, { image: { url: anu }, caption: cap });
+      }
+
+      if (quot.message.videoMessage) {
+        let cap = quot.message.videoMessage.caption;
+        let anu = await Void.downloadAndSaveMediaMessage(quot.message.videoMessage);
+        return Void.sendMessage(citel.chat, { video: { url: anu }, caption: cap });
       }
     } catch (e) {
       console.log("error", e);
+      return citel.reply("An error occurred while processing the viewOnce message.");
     }
   } else {
-    return citel.reply(`*⚠️WARNING⚠️*
-  
-_Don't text the Bot in pm._
-
-*㊙️If you want to add this bot in your GC(GroupChat) then ask the Developer*
-
-*〽️Developer:*
-• https://wa.me/+917086726371
-
-*📛Our official Support GC: https://chat.whatsapp.com/J66CTiDheI94vkxx6nIyp2*
-
-*💗Have a nice day💗*
-
-Kiyumi👘 Powered by:_ *©️TIKU_BOTS*`);
+    return citel.reply(`⚠️ You can only use this command in a group chat.`);
   }
 
   if (!citel.quoted) return citel.reply("```Uh Please Reply A ViewOnce Message```");
