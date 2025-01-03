@@ -13,7 +13,7 @@ var videotime = 60000; // 1000 min (consider changing the variable name if neces
 
 // Command Registration
 cmd({
-    pattern: "video",
+    pattern: "video2",
     alias: ["ytvideo"],
     use: '.video sameer kutti',
     react: "🎥",
