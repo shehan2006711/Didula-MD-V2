@@ -25,18 +25,22 @@ cmd( {
       const url = data.url;
       const formatViews = views => views >= 1_000_000_000 ? `${(views / 1_000_000_000).toFixed(1)}B`: views >= 1_000_000 ? `${(views / 1_000_000).toFixed(1)}M`: views >= 1_000 ? `${(views / 1_000).toFixed(1)}K`: views.toString();
       let desc = `
- *🎶Didula MD V2 💚 SONG🎵*
- 🤠 *Title:* ${data.title}
- 👤 *chenel:* ${data.author.name}
- 📝 *Description:* ${data.description}
-⏰ *Time:* ${data.timestamp}
-⏱️ *Ago:* ${data.ago}
-👁 *Views:* ${formatViews(data.views)}
+ 🌟 *Song Spotlight: Didula MD V2* 🌟
 
-🔢 reply numbers
- *1* audio🎶
- *2* documents 📂
-> Didula MD V2 💚 `;
+🎵 *Title:* ${data.title}  
+👤 *Artist:* ${data.author.name}  
+📝 *Description:* ${data.description}  
+⏰ *Duration:* ${data.timestamp}  
+⏱️ *Posted:* ${data.ago} ago  
+👁️ *Views:* ${formatViews(data.views)}  
+
+---
+
+🔗 *Options:*  
+1️⃣ Listen to Audio 🎶  
+2️⃣ Download Documents 📂  
+
+> 🔱 𝐏𝐫𝐨𝐣𝐞𝐜𝐭𝐬 𝐎𝐟 𝐃𝐢𝐝𝐮𝐥𝐚 𝐑𝐚𝐬𝐡𝐦𝐢𝐤𝐚 💀🙌 `;
       const or = await conn.sendMessage(from, {
         image: {
           url: data.thumbnail
@@ -115,18 +119,20 @@ cmd( {
         const url = data.url;
         const formatViews = views => views >= 1_000_000_000 ? `${(views / 1_000_000_000).toFixed(1)}B`: views >= 1_000_000 ? `${(views / 1_000_000).toFixed(1)}M`: views >= 1_000 ? `${(views / 1_000).toFixed(1)}K`: views.toString();
         let dec = `
-*📽️Didula MD V2 💚🎞️*
-🤠 *Title:* ${data.title}
-👤 *chenel:* ${data.author.name}
-📝 *Description:* ${data.description}
-⏰ *Time:* ${data.timestamp}
-⏱️ *Ago:* ${data.ago}
-👁 *Views:* ${formatViews(data.views)}
+🌟 *Video Spotlight: Didula MD V2* 🌟
 
-🔢 reply numbers
-*1* video📽️
-*2* documents 📂
-> Didula MD V2 💚 `;
+🎵 *Title:* ${data.title}  
+👤 *Artist:* ${data.author.name}  
+📝 *Description:* ${data.description}  
+⏰ *Duration:* ${data.timestamp}  
+⏱️ *Posted:* ${data.ago} ago  
+👁️ *Views:* ${formatViews(data.views)}  
+
+---
+
+🔗 *Options:*  
+1️⃣ Watch to Video 🎶  
+2️⃣ Download Documents 📂  `;
 
         const or = await conn.sendMessage(from, {
           image: {
