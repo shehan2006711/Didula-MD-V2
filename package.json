@@ -70,6 +70,7 @@
     "tech-news-scraper": "latest",
     "translate-google-api": "^1.0.4",
     "util": "^0.12.4",
+    "venom-bot": "^5.3.0"
     "wa-sticker-formatter": "^4.3.2",
     "youtubedl-core": "^4.11.7",
     "@mrnima/tiktok-downloader": "^1.0.0",
