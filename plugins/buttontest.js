@@ -4,10 +4,10 @@ const { Button } = require('@whiskeysockets/baileys'); // Import Button feature
 const pdfUrl = "https://i.ibb.co/tC37Q7B/20241220-122443.jpg";
 
 cmd({
-    pattern: "menu2",
+    pattern: "menu5",
     desc: "Check commands.",
     category: "main",
-    react: "✅",
+    react: "✨",
     filename: __filename
 }, async (conn, mek, m, { from, quoted, reply }) => {
     try {
