@@ -30,6 +30,7 @@
     "async-g-i-s": "^1.4.0",
     "axios": "^1.2.5",
     "btch-downloader": "^2.0.9",
+    "facebook-video-downloader": "^1.0.1",
     "caliph-api": "^1.0.0",
     "chatgpt-scraper": "^1.0.0",
     "cheerio": "^1.0.0-rc.12",
