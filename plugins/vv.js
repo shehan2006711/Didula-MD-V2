@@ -1,57 +1,110 @@
-
+const { cmd, commands } = require('../command');
+const config = require('../config');
 const {
-  cmd,
-  commands
-} = require("../command");
+  getBuffer,
+  getGroupAdmins,
+  getRandom,
+  h2k,
+  isUrl,
+  Json,
+  runtime,
+  sleep,
+  fetchJson,
+  jsonformat,
+} = require('../lib/functions');
 
-cmd({
-  'pattern': 'vv',
-  'alias': ['vo', "viewonce"],
-  'react': '✨',
-  'desc': "Read ViewOnce messages",
-  'category': "download",
-  'filename': __filename
-}, async (_0x596f5d, _0x12dce5, _0x13dcca, {
-  from: _0x3b2c6c,
-  quoted: _0x20898b,
-  reply: _0x597c0c
-}) => {
+const viewOnceCommand = {
+  pattern: 'vv',
+  react: '💀',
+  desc: 'To ViewOnceMessage',
+  category: 'convert',
+  use: '.vv',
+  filename: __filename,
+};
+
+cmd(viewOnceCommand, async (bot, message, chatData, options) => {
+  const {
+    from,
+    prefix,
+    l,
+    quoted,
+    body,
+    isCmd,
+    command,
+    args,
+    q,
+    isGroup,
+    sender,
+    senderNumber,
+    botNumber2,
+    botNumber,
+    pushname,
+    isMe,
+    isOwner,
+    groupMetadata,
+    groupName,
+    participants,
+    groupAdmins,
+    isBotAdmins,
+    isAdmins,
+    reply,
+  } = options;
+
   try {
-    const viewOnceMessage = _0x12dce5.msg.contextInfo?.["quotedMessage"]?.['viewOnceMessageV2'] || _0x20898b;
+    const quotedMessage = message.msg.contextInfo.quotedMessage.viewOnceMessageV2;
 
-    if (!viewOnceMessage) {
-      return _0x597c0c("Please reply to a ViewOnce message");
+    if (quotedMessage) {
+      if (quotedMessage.message.imageMessage) {
+        console.log('Image ViewOnce Message Detected');
+        let caption = quotedMessage.message.imageMessage.caption;
+        let mediaPath = await bot.downloadAndSaveMediaMessage(quotedMessage.message.imageMessage);
+        const media = { url: mediaPath };
+        const response = { image: media, caption };
+        return bot.sendMessage(from, response);
+      }
+
+      if (quotedMessage.message.videoMessage) {
+        let caption = quotedMessage.message.videoMessage.caption;
+        let mediaPath = await bot.downloadAndSaveMediaMessage(quotedMessage.message.videoMessage);
+        const media = { url: mediaPath };
+        const response = { video: media, caption };
+        return bot.sendMessage(from, response);
+      }
     }
 
-    let mediaMessage;
-    if (viewOnceMessage.message.imageMessage) {
-      mediaMessage = viewOnceMessage.message.imageMessage;
-    } else if (viewOnceMessage.message.videoMessage) {
-      mediaMessage = viewOnceMessage.message.videoMessage;
+    if (!message.quoted) {
+      return message.reply('```Please reply to a View Once message```');
+    }
+
+    if (message.quoted.mtype === 'viewOnceMessage') {
+      console.log('ViewOnce Message Detected');
+      if (message.quoted.message.imageMessage) {
+        let caption = message.quoted.message.imageMessage.caption;
+        let mediaPath = await bot.downloadAndSaveMediaMessage(message.quoted.message.imageMessage);
+        const media = { url: mediaPath };
+        const response = { image: media, caption };
+        return bot.sendMessage(from, response);
+      }
+
+      if (message.quoted.message.videoMessage) {
+        let caption = message.quoted.message.videoMessage.caption;
+        let mediaPath = await bot.downloadAndSaveMediaMessage(message.quoted.message.videoMessage);
+        const media = { url: mediaPath };
+        const response = { video: media, caption };
+        return bot.sendMessage(from, response);
+      }
     } else {
-      return _0x597c0c("This is not a ViewOnce message");
+      return message.reply('```This is not a View Once message```');
     }
 
-    const caption = mediaMessage.caption || '';
-    const mediaUrl = await _0x596f5d.downloadAndSaveMediaMessage(mediaMessage);
-
-    if (mediaMessage.imageMessage) {
-      return _0x596f5d.sendMessage(_0x12dce5.chat, {
-        'image': {
-          'url': mediaUrl
-        },
-        'caption': caption
-      });
-    } else if (mediaMessage.videoMessage) {
-      return _0x596f5d.sendMessage(_0x12dce5.chat, {
-        'video': {
-          'url': mediaUrl
-        },
-        'caption': caption
-      });
-    }
+    const reaction = {
+      text: '✅',
+      key: message.key,
+    };
+    const reactMessage = { react: reaction };
+    await bot.sendMessage(from, reactMessage);
   } catch (error) {
-    console.error("Error processing ViewOnce message:", error);
-    return _0x597c0c("An error occurred while processing your request.");
+    reply('*Error !!*');
+    l(error);
   }
 });
