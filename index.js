@@ -1,12 +1,23 @@
 const {
-default: makeWASocket,
-useMultiFileAuthState,
-DisconnectReason,
-jidNormalizedUser,
-getContentType,
-fetchLatestBaileysVersion,
-Browsers
-} = require('@whiskeysockets/baileys')
+  default: makeWASocket,
+  getAggregateVotesInPollMessage,
+  useMultiFileAuthState,
+  DisconnectReason,
+  getDevice,
+  fetchLatestBaileysVersion,
+  jidNormalizedUser,
+  getContentType,
+  Browsers,
+  makeInMemoryStore,
+  makeCacheableSignalKeyStore,
+  downloadContentFromMessage,
+  generateWAMessageFromContent,
+  prepareWAMessageMedia,
+  generateForwardMessageContent,
+  proto,
+} = require("@whiskeysockets/baileys");
+
+
 
 const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('./lib/functions')
 const fs = require('fs')
