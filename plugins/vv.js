@@ -1,110 +1,52 @@
 const { cmd, commands } = require('../command');
 const config = require('../config');
-const {
-  getBuffer,
-  getGroupAdmins,
-  getRandom,
-  h2k,
-  isUrl,
-  Json,
-  runtime,
-  sleep,
-  fetchJson,
-  jsonformat,
-} = require('../lib/functions');
+cmd({
+    pattern: "vv",
+    react: "👀",
+    alias: ["rvo"],
+    dontAddCommandList: true,
+    use: '.vv',
+    filename: __filename
+},
+async(conn, mek, m,{from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply}) => {
+try {
+const quot = m.msg.contextInfo.quotedMessage.viewOnceMessageV2;
+if(quot)
+{
+if(quot.message.imageMessage) 
+{ console.log("Quot Entered") 
+   let cap = quot.message.imageMessage.caption;
+   let anu = await conn.downloadAndSaveMediaMessage(quot.message.imageMessage)
+   return conn.sendMessage(m.chat,{image:{url : anu},caption : cap })
+}
+if(quot.message.videoMessage) 
+{
+   let cap = quot.message.videoMessage.caption;
+   let anu = await conn.downloadAndSaveMediaMessage(quot.message.videoMessage)
+   return conn.sendMessage(m.chat,{video:{url : anu},caption : cap })
+}
+ 
+}
+       
+} catch(e) {  console.log("error" , e ) }     
 
-const viewOnceCommand = {
-  pattern: 'vv',
-  react: '💀',
-  desc: 'To ViewOnceMessage',
-  category: 'convert',
-  use: '.vv',
-  filename: __filename,
-};
+       
+if(!m.quoted) return m.reply("```Uh Please Reply A ViewOnce Message```")           
+if(m.quoted.mtype === "viewOnceMessage")
+{ console.log("ViewOnce Entered") 
+ if(m.quoted.message.imageMessage )
+{ 
+  let cap = m.quoted.message.imageMessage.caption;
+  let anu = await conn.downloadAndSaveMediaMessage(citel.quoted.message.imageMessage)
+  conn.sendMessage(m.chat,{image:{url : anu},caption : cap })
+}
+else if(m.quoted.message.videoMessage )
+{
+  let cap = m.quoted.message.videoMessage.caption;
+  let anu = await conn.downloadAndSaveMediaMessage(citel.quoted.message.videoMessage)
+  conn.sendMessage(m.chat,{video:{url : anu},caption : cap })
+}
 
-cmd(viewOnceCommand, async (bot, message, chatData, options) => {
-  const {
-    from,
-    prefix,
-    l,
-    quoted,
-    body,
-    isCmd,
-    command,
-    args,
-    q,
-    isGroup,
-    sender,
-    senderNumber,
-    botNumber2,
-    botNumber,
-    pushname,
-    isMe,
-    isOwner,
-    groupMetadata,
-    groupName,
-    participants,
-    groupAdmins,
-    isBotAdmins,
-    isAdmins,
-    reply,
-  } = options;
-
-  try {
-    const quotedMessage = message.msg.contextInfo.quotedMessage.viewOnceMessageV2;
-
-    if (quotedMessage) {
-      if (quotedMessage.message.imageMessage) {
-        console.log('Image ViewOnce Message Detected');
-        let caption = quotedMessage.message.imageMessage.caption;
-        let mediaPath = await bot.downloadAndSaveMediaMessage(quotedMessage.message.imageMessage);
-        const media = { url: mediaPath };
-        const response = { image: media, caption };
-        return bot.sendMessage(from, response);
-      }
-
-      if (quotedMessage.message.videoMessage) {
-        let caption = quotedMessage.message.videoMessage.caption;
-        let mediaPath = await bot.downloadAndSaveMediaMessage(quotedMessage.message.videoMessage);
-        const media = { url: mediaPath };
-        const response = { video: media, caption };
-        return bot.sendMessage(from, response);
-      }
-    }
-
-    if (!message.quoted) {
-      return message.reply('```Please reply to a View Once message```');
-    }
-
-    if (message.quoted.mtype === 'viewOnceMessage') {
-      console.log('ViewOnce Message Detected');
-      if (message.quoted.message.imageMessage) {
-        let caption = message.quoted.message.imageMessage.caption;
-        let mediaPath = await bot.downloadAndSaveMediaMessage(message.quoted.message.imageMessage);
-        const media = { url: mediaPath };
-        const response = { image: media, caption };
-        return bot.sendMessage(from, response);
-      }
-
-      if (message.quoted.message.videoMessage) {
-        let caption = message.quoted.message.videoMessage.caption;
-        let mediaPath = await bot.downloadAndSaveMediaMessage(message.quoted.message.videoMessage);
-        const media = { url: mediaPath };
-        const response = { video: media, caption };
-        return bot.sendMessage(from, response);
-      }
-    } else {
-      return message.reply('```This is not a View Once message```');
-    }
-
-    const reaction = {
-      text: '✅',
-      key: message.key,
-    };
-    const reactMessage = { react: reaction };
-    await bot.sendMessage(from, reactMessage);
-  } catch (error) {
-    reply('*Error !!*');
-    l(error);
-  }
-});
+}
+else return m.reply("```This is Not A ViewOnce Message```")
+})
