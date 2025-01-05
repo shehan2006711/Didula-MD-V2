@@ -1,6 +1,8 @@
 const {
   downloadContentFromMessage
 } = require('@whiskeysockets/baileys')
+const { cmd } = require('../command'); 
+const config = require('../config')
 
 cmd({
     pattern: "vv",
