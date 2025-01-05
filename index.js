@@ -16,9 +16,7 @@ const {
   generateForwardMessageContent,
   proto,
 } = require("@whiskeysockets/baileys");
-
-
-
+const FileType = require("file-type");
 const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('./lib/functions')
 const fs = require('fs')
 const P = require('pino')
