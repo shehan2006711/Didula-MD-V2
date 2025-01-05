@@ -133,6 +133,34 @@ conn.sendMessage(from, { text: teks }, { quoted: mek })
 }
 
 conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
+
+//============================for rvo================================================
+      conn.downloadAndSaveMediaMessage = async (
+        message,
+        filename,
+        attachExtension = true
+      ) => {
+        let quoted = message.msg ? message.msg : message;
+        let mime = (message.msg || message).mimetype || "";
+        let messageType = message.mtype
+          ? message.mtype.replace(/Message/gi, "")
+          : mime.split("/")[0];
+        const stream = await downloadContentFromMessage(quoted, messageType);
+        let buffer = Buffer.from([]);
+        for await (const chunk of stream) {
+          buffer = Buffer.concat([buffer, chunk]);
+        }
+        let type = await FileType.fromBuffer(buffer);
+        trueFileName = attachExtension ? filename + "." + type.ext : filename;
+        // save to file
+        await fs.writeFileSync(trueFileName, buffer);
+        return trueFileName;
+      };
+
+
+
+
+
               let mime = '';
               let res = await axios.head(url)
               mime = res.headers['content-type']
