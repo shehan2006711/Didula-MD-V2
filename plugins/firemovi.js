@@ -1,92 +1,67 @@
+
 const { cmd } = require('../command'); // Adjust based on your command handling system
-const puppeteer = require('puppeteer');
-const cheerio = require('cheerio');
+const axios = require("axios");
+const cheerio = require("cheerio"); // For parsing HTML
 require("dotenv").config();
 const CREATOR = "Dark Yasiya";
 
-// Function to search for movies on Firemovies
-async function searchMovies(query) {
+// Function to fetch movie details from Hoopla
+async function fetchMovieDetails(query) {
+    const searchUrl = `https://www.hoopladigital.com/search?q=${encodeURIComponent(query)}&scope=MOVIE&type=direct`;
     try {
-        const url = `https://firemovieshub.com/?s=${query}`;
+        const response = await axios.get(searchUrl);
+        const html = response.data;
+        const $ = cheerio.load(html);
+        const movies = [];
 
-        // Launch Puppeteer browser
-        const browser = await puppeteer.launch({
-            headless: true,
-            executablePath: process.env.CHROME_BIN || '/usr/bin/google-chrome' // Adjust this path if necessary
-        });
-        const page = await browser.newPage();
-
-        // Set a user-agent and go to the page
-        await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
-        await page.goto(url, { waitUntil: 'domcontentloaded' });
-
-        // Wait for the results to load
-        await page.waitForSelector('div.title a'); // This waits for the movie titles to appear
-
-        // Get the page content after it has loaded
-        const pageContent = await page.content();
-
-        // Use Cheerio to parse the page content
-        const $ = cheerio.load(pageContent);
-
-        // Extract movie titles, years, links, and images from the page
-        const data = [];
-        $("div.result-item").each((c, d) => {
-            data.push({
-                title: $(d).find("div.title > a").text(),
-                ntitle: $(d).find("span.movies").text(),
-                year: $(d).find("span.year").text(),
-                link: $(d).find("a").attr("href"),
-                image: $(d).find("img").attr("src")
-            });
+        $(".card-title").each((i, el) => {
+            const title = $(el).text().trim();
+            const url = $(el).parent().attr("href");
+            const image = $(el).closest(".card").find("img").attr("src");
+            const description = $(el).closest(".card").find(".card-description").text().trim();
+            
+            movies.push({ title, url: `https://www.hoopladigital.com${url}`, image, description });
         });
 
-        // Close the browser after scraping
-        await browser.close();
-
-        if (data.length === 0) {
-            throw new Error("No movies found for the search query.");
+        if (movies.length === 0) {
+            throw new Error("No Movies found.");
         }
 
-        return data;
+        return { data: movies };
     } catch (error) {
         console.error(error);
-        throw new Error("Error searching for movies: " + error.message);
+        throw new Error("Error fetching movie details: " + error.message);
     }
 }
 
-// Command to handle the Firemovies search request
+// Command to handle the movie search request
 cmd({
-    pattern: "firemovie",
-    alias: ["fmovie"],
-    desc: "Search for movies on Firemovies.",
+    pattern: "movie1",
+    alias: ["moviedetails"],
+    desc: "Get details of a movie from Hoopla.",
     category: "Movies",
     react: "🎬",
-    use: '.firemovie <movie_name>',
+    use: '.movie <movie_name>',
     filename: __filename
 }, async (conn, mek, m, { from, reply, args }) => {
     if (!args[0]) {
-        return reply("Please provide a movie name to search.");
+        return reply("Please provide a movie name.");
     }
 
-    const query = args.join(" ");
-    
+    const movieName = args.join(" ");
     try {
-        reply("Searching for movies...");
+        reply(`Searching for movie details of "${movieName}"...`);
 
-        const movies = await searchMovies(query);
-        let movieMessage = "🎬 *Search Results:*\n\n";
+        const list = await fetchMovieDetails(movieName);
+        const latestMovie = list.data[0]; // Get the first movie item
 
-        for (const movie of movies) {
-            movieMessage += `
-            *Title:* ${movie.title}
-            *Year:* ${movie.year}
-            *Link:* ${movie.link}
-            `;
+        const movieMessage = `
+            🎬 *${latestMovie.title}*
+            *📖 Description:* ${latestMovie.description || "No description available."}
+            🔗 [Watch Here](${latestMovie.url})
+        `;
 
-            // Send the movie message with the image
-            await conn.sendMessage(from, { image: { url: movie.image }, caption: movieMessage });
-        }
+        await conn.sendMessage(from, { image: { url: latestMovie.image }, caption: movieMessage });
     } catch (error) {
         console.error(error);
         reply(`An error occurred: ${error.message}`);
