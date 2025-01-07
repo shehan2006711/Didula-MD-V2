@@ -4,10 +4,12 @@ const cheerio = require('cheerio');
 require("dotenv").config();
 const CREATOR = "Dark Yasiya";
 
-// Function to fetch movie download link from Firemovies
-async function fetchMovieDownloadLink(movieUrl) {
+// Function to search for movies on Firemovies
+async function searchMovies(query) {
     try {
-        // Launch Puppeteer browser with executable path
+        const url = `https://firemovieshub.com/?s=${query}`;
+
+        // Launch Puppeteer browser
         const browser = await puppeteer.launch({
             headless: true,
             executablePath: process.env.CHROME_BIN || '/usr/bin/google-chrome' // Adjust this path if necessary
@@ -16,10 +18,10 @@ async function fetchMovieDownloadLink(movieUrl) {
 
         // Set a user-agent and go to the page
         await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
-        await page.goto(movieUrl, { waitUntil: 'domcontentloaded' });
+        await page.goto(url, { waitUntil: 'domcontentloaded' });
 
         // Wait for the results to load
-        await page.waitForSelector('small.text a');
+        await page.waitForSelector('div.title a'); // This waits for the movie titles to appear
 
         // Get the page content after it has loaded
         const pageContent = await page.content();
@@ -27,50 +29,64 @@ async function fetchMovieDownloadLink(movieUrl) {
         // Use Cheerio to parse the page content
         const $ = cheerio.load(pageContent);
 
-        // Extract movie title and download link
-        const title = $('small.text a').text();
-        const downloadLink = $("a#link.btn").attr("href");
+        // Extract movie titles, years, links, and images from the page
+        const data = [];
+        $("div.result-item").each((c, d) => {
+            data.push({
+                title: $(d).find("div.title > a").text(),
+                ntitle: $(d).find("span.movies").text(),
+                year: $(d).find("span.year").text(),
+                link: $(d).find("a").attr("href"),
+                image: $(d).find("img").attr("src")
+            });
+        });
 
         // Close the browser after scraping
         await browser.close();
 
-        if (!title || !downloadLink) {
-            throw new Error("Movie title or download link not found.");
+        if (data.length === 0) {
+            throw new Error("No movies found for the search query.");
         }
 
-        return { title, downloadLink };
+        return data;
     } catch (error) {
         console.error(error);
-        throw new Error("Error fetching movie download link: " + error.message);
+        throw new Error("Error searching for movies: " + error.message);
     }
 }
 
-// Command to handle the Firemovies download request
+// Command to handle the Firemovies search request
 cmd({
     pattern: "firemovie",
     alias: ["fmovie"],
-    desc: "Get the download link for a movie from Firemovies.",
+    desc: "Search for movies on Firemovies.",
     category: "Movies",
     react: "🎬",
-    use: '.firemovie <movie_url>',
+    use: '.firemovie <movie_name>',
     filename: __filename
 }, async (conn, mek, m, { from, reply, args }) => {
     if (!args[0]) {
-        return reply("Please provide a movie URL.");
+        return reply("Please provide a movie name to search.");
     }
 
-    const movieUrl = args[0];
+    const query = args.join(" ");
     
     try {
-        reply("Fetching the movie download link...");
+        reply("Searching for movies...");
 
-        const movieData = await fetchMovieDownloadLink(movieUrl);
-        const movieMessage = `
-            🎬 *${movieData.title}*
-            🔗 *Download Link:* ${movieData.downloadLink}
-        `;
+        const movies = await searchMovies(query);
+        let movieMessage = "🎬 *Search Results:*\n\n";
 
-        reply(movieMessage);
+        for (const movie of movies) {
+            movieMessage += `
+            *Title:* ${movie.title}
+            *Year:* ${movie.year}
+            *Link:* ${movie.link}
+            `;
+
+            // Send the movie message with the image
+            await conn.sendMessage(from, { image: { url: movie.image }, caption: movieMessage });
+        }
     } catch (error) {
         console.error(error);
         reply(`An error occurred: ${error.message}`);
