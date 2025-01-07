@@ -7,8 +7,11 @@ const CREATOR = "Dark Yasiya";
 // Function to fetch movie download link from Firemovies
 async function fetchMovieDownloadLink(movieUrl) {
     try {
-        // Launch Puppeteer browser
-        const browser = await puppeteer.launch({ headless: true });
+        // Launch Puppeteer browser with executable path
+        const browser = await puppeteer.launch({
+            headless: true,
+            executablePath: process.env.CHROME_BIN || '/usr/bin/google-chrome' // Adjust this path if necessary
+        });
         const page = await browser.newPage();
 
         // Set a user-agent and go to the page
