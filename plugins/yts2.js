@@ -13,7 +13,7 @@ var videotime = 60000; // 1000 min (consider changing the variable name if neces
 
 // Command Registration
 cmd({
-    pattern: "song",
+    pattern: "song1",
     alias: ["ytsearch"],
     use: '.yts sameer kutti',
     react: "🔎",
