@@ -7,30 +7,32 @@ const mimeTypes = require('mime-types');
 
 let activeGroups = {};
 let lastSongTitles = {};
+const searchQueries = ["Sinhala songs", "Slowed Reverb Sinhala", "New Sinhala Song", "මනෝපාරකට", "manoparakata"];
+let searchIndex = 0;
 
 // Function to fetch the latest song from YouTube
 async function getLatestSong() {
     try {
-        const searchResult = await yts("Sinhala songs"); // Modify this search query as needed
-        const song = searchResult.all[0]; // Get the first song result
+        const searchQuery = searchQueries[searchIndex];
+        const searchResult = await yts(searchQuery);
+        const song = searchResult.all[0];
 
         if (!song) {
             throw new Error("No song found.");
         }
 
-        // New API for downloading MP3
         const downloadInfo = await fetchJson(`https://apitest1-f7dcf17bd59b.herokuapp.com/download/ytmp3?url=${song.url}`);
-        
+
         if (!downloadInfo.result || !downloadInfo.result.dl_link) {
             throw new Error("Failed to fetch download link.");
         }
 
         return {
-            title: downloadInfo.result.title || song.title, // Fallback to song title
+            title: downloadInfo.result.title || song.title,
             artist: song.author.name,
             downloadUrl: downloadInfo.result.dl_link,
             thumbnail: song.thumbnail,
-            audioUrl: downloadInfo.result.dl_link // Using the new download link
+            audioUrl: downloadInfo.result.dl_link
         };
     } catch (error) {
         console.error(`Error fetching latest song: ${error.message}`);
@@ -41,27 +43,20 @@ async function getLatestSong() {
 // Function to send the latest song to a group
 async function sendSong(conn, groupId, song) {
     if (song) {
-        // Check if the title is different before sending
         if (lastSongTitles[groupId] !== song.title) {
-            lastSongTitles[groupId] = song.title; // Update the last song title sent to the group
+            lastSongTitles[groupId] = song.title;
 
-            // Constructing the message
             let message = `🎶 *Latest Song*\n\n*Title:* ${song.title}\n*Artist:* ${song.artist}\n*Download Link:* ${song.downloadUrl}\n\n*© Projects of Didula Rashmika*`;
 
-            // Downloading the MP3 file
-            const res = await axios.get(song.audioUrl, { 
+            const res = await axios.get(song.audioUrl, {
                 responseType: 'arraybuffer',
                 timeout: 15000
             });
 
-            // Get MIME type and extension
             const mime = res.headers['content-type'] || 'application/octet-stream';
             const extension = mimeTypes.extension(mime) || 'unknown';
+            const fileName = `${song.title}.${extension}`;
 
-            // Define file name
-            const fileName = `${song.title}.${extension}`; 
-
-            // Send the message with the MP3 file
             await conn.sendMessage(groupId, {
                 document: { url: song.audioUrl },
                 caption: message,
@@ -75,8 +70,6 @@ async function sendSong(conn, groupId, song) {
 // Function to check and post the latest song
 async function checkAndPostSong(conn, groupId) {
     const latestSong = await getLatestSong();
-
-    // Send the latest song
     if (latestSong) {
         await sendSong(conn, groupId, latestSong);
     }
@@ -99,7 +92,6 @@ cmd({
                 activeGroups[from] = true;
                 await conn.sendMessage(from, { text: "🎵 Automatic song updates activated." });
 
-                // Start the interval if it's not already active
                 if (!activeGroups['interval']) {
                     activeGroups['interval'] = setInterval(async () => {
                         for (const groupId in activeGroups) {
@@ -107,6 +99,7 @@ cmd({
                                 await checkAndPostSong(conn, groupId);
                             }
                         }
+                        searchIndex = (searchIndex + 1) % searchQueries.length; // Cycle through search queries
                     }, 60000); // Run every 60 seconds
                 }
             } else {
@@ -138,7 +131,6 @@ cmd({
                 delete activeGroups[from];
                 await conn.sendMessage(from, { text: "🛑 Automatic song updates deactivated." });
 
-                // Stop the interval if no groups are active
                 if (Object.keys(activeGroups).length === 1 && activeGroups['interval']) {
                     clearInterval(activeGroups['interval']);
                     delete activeGroups['interval'];
