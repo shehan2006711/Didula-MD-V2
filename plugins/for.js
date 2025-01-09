@@ -1,48 +1,39 @@
-
 const { cmd } = require('../command');
-const os = require("os");
-const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, Func, fetchJson } = require('../lib/functions');
-const axios = require('axios');
-const config = require('../config')
 
 cmd({
     pattern: "forward",
-    desc: "forward msgs",
-    alias: ["fo"],
-    category: "owner",
-    use: '.forward < Jid address >',
-    filename: __filename
-},
+    desc: "Forwards any message (text, image, video, audio, etc.) to a specified JID.",
+    react: "🔁",
+    category: "main",
+    filename: __filename,
+}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+    try {
+        // Ensure the user has provided a target JID (user or group)
+        const targetJid = args[0];
+        if (!targetJid) return reply("❌ Please provide the JID (user or group) to forward the message to.");
 
-async (conn, mek, m, { from, l, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+        // If the message is quoted, forward the quoted message; otherwise, forward the current message.
+        const messageToForward = quoted ? quoted : m;
 
-if (!isOwner) {
-	return reply("*Owner Only ❌*")}
-	
-if (!q || !m.quoted) {
-reply("*give me message ❌*")
-}
+        // Handle different types of media
+        if (messageToForward.message) {
+            const messageType = Object.keys(messageToForward.message)[0]; // Check message type
 
-
-
-let p;
-let message = {}
-
-            message.key = mek.quoted?.fakeObj?.key;
-
-            if (mek.quoted?.documentWithCaptionMessage?.message?.documentMessage) {
-            
-		let mime = mek.quoted.documentWithCaptionMessage.message.documentMessage.mimetype
-
-const mimeType = require('mime-types');
-let ext = mimeType.extension(mime);		    
-
-                mek.quoted.documentWithCaptionMessage.message.documentMessage.fileName = (p ? p : mek.quoted.documentWithCaptionMessage.message.documentMessage.caption) + "." + ext;
+            if (messageType === "imageMessage" || messageType === "videoMessage" || messageType === "audioMessage" || messageType === "documentMessage") {
+                // For media types (image, video, audio, document), forward them
+                await conn.sendMessage(targetJid, { [messageType]: messageToForward.message[messageType] }, { quoted: mek });
+            } else if (messageType === "textMessage") {
+                // For text, just forward the text
+                await conn.sendMessage(targetJid, { text: messageToForward.message.text }, { quoted: mek });
+            } else {
+                // If the message is of any other type, forward it as-is
+                await conn.sendMessage(targetJid, messageToForward, { quoted: mek });
             }
+        }
 
-            message.message = mek.quoted;
-const mass =  await conn.forwardMessage(q, message, true)
-return reply(`*Didula MD V2 💚 Message forwarded to:*\n\n ${q}`)
-            
-})
-
+        reply(`✅ Message forwarded to: ${targetJid}`);
+    } catch (e) {
+        console.error('Error forwarding message:', e);
+        reply('❌ An error occurred while trying to forward the message.');
+    }
+});
