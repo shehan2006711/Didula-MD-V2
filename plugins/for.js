@@ -1,39 +1,32 @@
+
 const { cmd } = require('../command');
 
 cmd({
-    pattern: "forward",
-    desc: "Forwards any message (text, image, video, audio, etc.) to a specified JID.",
-    react: "🔁",
-    category: "main",
+    pattern: "fo",
+    desc: "Forwards mentioned messages, videos, or audios to a specified user or group by JID.",
+    react: "📤",
+    category: "group",
     filename: __filename,
-}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+}, async (conn, mek, m, { from, quoted, isGroup, participants }) => {
     try {
-        // Ensure the user has provided a target JID (user or group)
-        const targetJid = args[0];
-        if (!targetJid) return reply("❌ Please provide the JID (user or group) to forward the message to.");
+        // Check if the command is used in a group
+        
+        // Check if there is a quote/message to forward
+        if (!quoted) return reply(`Please mention a message, video, or audio to forward.`);
 
-        // If the message is quoted, forward the quoted message; otherwise, forward the current message.
-        const messageToForward = quoted ? quoted : m;
+        // Get the JID of the user or group to forward the message to
+        const targetJid = m.text.split(' ')[1]; // This assumes the JID is provided after the command
 
-        // Handle different types of media
-        if (messageToForward.message) {
-            const messageType = Object.keys(messageToForward.message)[0]; // Check message type
+        // Validate the JID
+        if (!targetJid) return reply(`Please provide a valid JID to forward the message.`);
 
-            if (messageType === "imageMessage" || messageType === "videoMessage" || messageType === "audioMessage" || messageType === "documentMessage") {
-                // For media types (image, video, audio, document), forward them
-                await conn.sendMessage(targetJid, { [messageType]: messageToForward.message[messageType] }, { quoted: mek });
-            } else if (messageType === "textMessage") {
-                // For text, just forward the text
-                await conn.sendMessage(targetJid, { text: messageToForward.message.text }, { quoted: mek });
-            } else {
-                // If the message is of any other type, forward it as-is
-                await conn.sendMessage(targetJid, messageToForward, { quoted: mek });
-            }
-        }
+        // Forward the quoted message to the target JID
+        await conn.forwardMessage(targetJid, quoted);
 
-        reply(`✅ Message forwarded to: ${targetJid}`);
+        // Send a confirmation message
+        reply(`Successfully forwarded the message to ${targetJid}.`);
     } catch (e) {
         console.error('Error forwarding message:', e);
-        reply('❌ An error occurred while trying to forward the message.');
+        reply(`An error occurred while trying to forward the message. Please try again.`);
     }
 });
