@@ -66,6 +66,11 @@ async (conn, mek, m, { from, isOwner, reply }) => {
 });
 
 
+
+
+
+
+
 cmd({
     pattern: "jid",
     desc: "Get the bot's JID.",
@@ -75,8 +80,21 @@ cmd({
 },
 async (conn, mek, m, { from, isOwner, reply }) => {
     if (!isOwner) return reply("❌ You are not the owner!");
-    reply(`🤖 *Bot JID:* ${conn.user.jid}`);
+    
+    // Debugging: Check the conn.user object
+    console.log(conn.user);
+
+    if (conn.user && conn.user.jid) {
+        reply(`🤖 *Bot JID:* ${conn.user.jid}`);
+    } else {
+        reply("❌ Unable to retrieve the JID.");
+    }
 });
+
+
+
+
+
 // 8. Group JIDs List
 cmd({
     pattern: "gjid",
