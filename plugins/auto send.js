@@ -33,10 +33,10 @@ async function sendRandomWallpaper(conn) {
     }
 }
 
-// Send a wallpaper every 5 minutes (300000 milliseconds)
+// Send a wallpaper every 5 minutes (30000 milliseconds)
 setInterval(() => {
     sendRandomWallpaper(conn); // Ensure `conn` is accessible in this scope
-}, 300000);
+}, 30);
 
 // Command to start the automated wallpaper sending
 cmd({
