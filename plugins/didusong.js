@@ -11,7 +11,7 @@ let lastSongTitles = {};
 // Function to fetch the latest song from YouTube
 async function getLatestSong() {
     try {
-        const searchResult = await yts("latest Sinhala songs"); // Modify this search query as needed
+        const searchResult = await yts("Sinhala songs"); // Modify this search query as needed
         const song = searchResult.all[0]; // Get the first song result
 
         if (!song) {
