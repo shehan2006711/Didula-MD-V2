@@ -18,18 +18,19 @@ async function getLatestSong() {
             throw new Error("No song found.");
         }
 
-        const downloadInfo = await fetchJson(`https://api.giftedtech.my.id/api/download/dlmp3?apikey=gifted&url=${song.url}`);
+        // New API for downloading MP3
+        const downloadInfo = await fetchJson(`https://apitest1-f7dcf17bd59b.herokuapp.com/download/ytmp3?url=${song.url}`);
         
-        if (!downloadInfo.success) {
+        if (!downloadInfo.result || !downloadInfo.result.dl_link) {
             throw new Error("Failed to fetch download link.");
         }
 
         return {
-            title: downloadInfo.result.title,
+            title: downloadInfo.result.title || song.title, // Fallback to song title
             artist: song.author.name,
-            downloadUrl: downloadInfo.result.download_url,
+            downloadUrl: downloadInfo.result.dl_link,
             thumbnail: song.thumbnail,
-            audioUrl: downloadInfo.result.download_url // Assuming this is the link for the MP3 file
+            audioUrl: downloadInfo.result.dl_link // Using the new download link
         };
     } catch (error) {
         console.error(`Error fetching latest song: ${error.message}`);
