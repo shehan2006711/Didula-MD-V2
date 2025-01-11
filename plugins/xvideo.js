@@ -5,8 +5,53 @@ const { fetchJson } = require('../lib/functions') // Make sure the path is corre
 const apilink = 'https://www.dark-yasiya-api.site/' // API LINK ( DO NOT CHANGE THIS!! )
 
 cmd({
+  pattern: "xvdown",
+  alias: ["dlxv","xvdl"],
+  react: '🫣',
+  desc: "Download xvideos videos",
+  category: "nsfw",
+  use: '.xv <xvideos link>',
+  filename: __filename
+},
+async(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply}) => {
+try{      
+//if (!isMe) return await reply('🚩 You are not a premium user\nbuy via message to owner!!')
+if (!q) return reply('*Please give me url !!*')
+
+
+let xv_info = await fetchJson(`https://www.dark-yasiya-api.site/download/xvideo?url=${q}`)
+const msg = `
+         💦 *XVIDEO DOWNLOADER* 💦
+
+     
+• *Title* - ${xv_info.result.title}
+
+• *Views* - ${xv_info.result.views}
+
+• *Like* - ${xv_info.result.like}
+
+• *Deslike* - ${xv_info.result.deslike}
+
+• *Size* - ${xv_info.result.size}`
+
+
+
+await conn.sendMessage( from, { image: { url: xv_info.result.image || '' }, caption: msg }, { quoted: mek })
+
+// SEND VIDEO
+await conn.sendMessage(from, { document: { url: xv_info.result.dl_link }, mimetype: "video/mp4", fileName: xv_info.result.title, caption: xv_info.result.title }, { quoted: mek });
+
+
+} catch (e) {
+reply('*Error !!*')
+console.log(e)
+}
+})
+
+
+cmd({
     pattern: "xvideo",
-    alias: ["xvdl", "xvdown"],
+    alias: ["xvdl1", "xvdown1"],
     react: "🔞",
     desc: "Download xvideo.com porn video",
     category: "download",
