@@ -1,4 +1,3 @@
-
 {
   "name": "Didula MD",
   "version": "1.0.0",
@@ -12,7 +11,7 @@
   "dependencies": {
     "@adiwajshing/keyed-db": "^0.2.4",
     "@dark-yasiya/nexara": "^1.0.0",
-    "@whiskeysockets/baileys":"6.7.9",
+    "@whiskeysockets/baileys": "github:tigerbotz/W-T-B-I-NEW-BALIYES",
     "@bochilteam/scraper": "^4.0.22-alpha.0",
     "@distube/ytdl-core": "^4.13.5",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
@@ -59,6 +58,7 @@
     "os": "^0.1.2",
     "pg": "^8.11.0",
     "pino": "^7.0.5",
+    "jimp": "^0.16.13",   
     "pm2": "^5.2.0",
     "puppeteer": "^23.11.1",
     "qrcode": "^1.5.3",
