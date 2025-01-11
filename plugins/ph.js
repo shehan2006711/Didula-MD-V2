@@ -31,13 +31,13 @@ async (conn, mek, m, { from, quoted, reply, q }) => {
         • *𝖳𝗂𝗍𝗅𝗂𝖾* - ${phub_info.video_title}
         • *𝖵𝗂𝖾𝗐𝗌* - ${phub_info.video_views || 'N/A'}
         • *𝖴𝗽𝗹𝗼𝖺𝖽𝗲𝗋* - ${phub_info.video_uploader}
-        • *𝖳𝗋𝗮𝖿𝗳𝗂𝖼* - ${phub_info.video_upload_date}
+        • *𝖳𝗋𝗮𝖿𝗋𝗂𝖼* - ${phub_info.video_upload_date}
         • *𝖶𝗈𝗋𝖣* - ${phub_info.format.map(f => `${f.resolution}p`).join(', ')}
 
          *©ᴩʀᴏᴊᴇᴄᴛꜱ ᴏꜰ ᴅɪᴅᴜʟᴀ ʀᴀꜱʜᴍɪᴋᴀ*`;
 
         // Sending the message with details
-        const sentMsg = await conn.sendMessage(from, {
+        await conn.sendMessage(from, {
             text: msg,
             contextInfo: {
                 forwardingScore: 999,
@@ -58,11 +58,27 @@ async (conn, mek, m, { from, quoted, reply, q }) => {
         }, { quoted: mek });
 
         // Send available resolution options to user
-        const downloadOptions = phub_info.format.map(f => `${f.resolution}p: ${f.download_url}`).join('\n');
-        await conn.sendMessage(from, {
-            text: `*Choose a resolution to download:*\n${downloadOptions}`,
-            caption: phub_info.video_title
-        }, { quoted: mek });
+        const downloadOptions = phub_info.format.map((f, index) => `${index + 1}. ${f.resolution}p`).join('\n');
+        await reply(`*Choose a resolution to download:*\n${downloadOptions}\n\n*Reply with the number of your choice!*`);
+
+        // Wait for user's response
+        const filter = m => m.from === from && !m.quoted;
+        const collected = await conn.awaitMessages(filter, { max: 1, time: 30000 });
+
+        if (collected.size === 0) {
+            return reply('No response received. Please try again.');
+        }
+
+        const choiceIndex = parseInt(collected.first().body) - 1;
+
+        if (isNaN(choiceIndex) || choiceIndex < 0 || choiceIndex >= phub_info.format.length) {
+            return reply('Invalid choice. Please enter a valid number.');
+        }
+
+        const downloadUrl = phub_info.format[choiceIndex].download_url;
+
+        // Send the video to the user
+        await conn.sendMessage(from, { video: { url: downloadUrl }, caption: phub_info.video_title }, { quoted: mek });
 
     } catch (error) {
         console.error(error);
