@@ -1,87 +1,79 @@
 
-const { cmd } = require('../command'); // Ensure the path is correct
-const { fetchJson } = require('../lib/functions'); // Ensure the path is correct
+const { cmd } = require('../command');
+const { fetchJson, reply } = require('../lib/functions'); // Ensure the path is correct
+const axios = require('axios');
 
-const apilink = 'https://www.dark-yasiya-api.site/'; // API LINK (DO NOT CHANGE THIS!!)
+// API Configuration
+const searchApiLink = 'https://www.dark-yasiya-api.site/search/phub?q=';
+const downloadApiLink = 'https://www.dark-yasiya-api.site/download/phub?url=';
 
+// Command Registration
 cmd({
     pattern: "phub",
-    alias: ["phdl", "phdown"],
-    react: "🔞",
-    desc: "Download pornhub.com porn video",
+    alias: ["pornhub"],
+    use: '.phub search_term',
+    react: "🍑",
+    desc: "Search and download videos from Pornhub.",
     category: "download",
-    use: '.phub <text>',
     filename: __filename
-},
-async (conn, mek, m, { from, quoted, reply, q }) => {
+}, 
+
+async (conn, mek, m, { from, q, reply }) => {
     try {
-        if (!q) return await reply("𝖯𝗅𝖺𝗌𝖾 𝖦𝗂𝗏𝖾 𝗆𝖾 𝖥𝖾𝗐 𝖶𝗈𝗋𝖽!");
+        if (!q) return reply('*Please provide a search term!*');
 
         // Search for videos on Pornhub
-        const phub_list = await fetchJson(`${apilink}/search/phub?q=${q}`);
-        if (phub_list.result.length < 1) return await reply("No results found!");
+        const searchResponse = await fetchJson(`${searchApiLink}${encodeURIComponent(q)}`);
+        if (searchResponse.result.length === 0) {
+            return reply("🚫 No results found!");
+        }
 
-        // Get download link for the first video
-        const phub_info = await fetchJson(`${apilink}/download/phub?url=${phub_list.result[0].url}`);
+        // Get the first result
+        const video = searchResponse.result[0];
+        const downloadResponse = await fetchJson(`${downloadApiLink}${encodeURIComponent(video.url)}`);
+
+        // Check if the download response is successful
+        if (downloadResponse.code !== 0) {
+            return await reply("🚫 Error occurred while fetching video information!");
+        }
+
+        const videoInfo = downloadResponse;
 
         // Prepare the message
         const msg = `
-        *乂 Didula MD-V2 PORNHUB DOWNLOADER* 🔞
+            *Pornhub Video Downloader* 🍑
 
-        • *𝖳𝗂𝗍𝗅𝗂𝖾* - ${phub_info.video_title}
-        • *𝖵𝗂𝖾𝗐𝗌* - ${phub_info.video_views || 'N/A'}
-        • *𝖴𝗽𝗹𝗼𝖺𝖽𝗲𝗋* - ${phub_info.video_uploader}
-        • *𝖳𝗋𝗮𝖿𝗋𝗂𝖼* - ${phub_info.video_upload_date}
-        • *𝖶𝗈𝗋𝖣* - ${phub_info.format.map(f => `${f.resolution}p`).join(', ')}
+            • *Title* - ${videoInfo.video_title}\n
+            • *Uploader* - ${videoInfo.video_uploader}\n
+            • *Upload Date* - ${videoInfo.video_upload_date}\n
+            • *Download Links:*
 
-         *©ᴩʀᴏᴊᴇᴄᴛꜱ ᴏꜰ ᴅɪᴅᴜʟᴀ ʀᴀꜱʜᴍɪᴋᴀ*`;
+            240p: ${videoInfo.format[0].download_url}
+            480p: ${videoInfo.format[1].download_url}
+            720p: ${videoInfo.format[2].download_url}
+            1080p: ${videoInfo.format[3].download_url}
+        `;
 
-        // Sending the message with details
+        // Send the message with video details
         await conn.sendMessage(from, {
             text: msg,
             contextInfo: {
                 forwardingScore: 999,
                 isForwarded: true,
-                forwardedNewsletterMessageInfo: {
-                    newsletterName: 'ᴩʀᴏᴊᴇᴄᴛꜱ ᴏꜰ ᴅɪᴅᴜʟᴀ ʀᴀꜱʜᴍɪᴋᴀ',
-                    newsletterJid: "120363343196447945@newsletter",
-                },
                 externalAdReply: {
-                    title: `Didula MD-V2 Pornhub Downloader`,
-                    body: `Can't Find The Information. You Can Try Another Way. Error Code 4043`,
-                    thumbnailUrl: phub_list.result[0].image,
-                    sourceUrl: phub_info.original_url,
+                    title: `Pornhub Video Downloader`,
+                    body: `Download your favorite Pornhub videos easily!`,
+                    thumbnailUrl: video.image,
+                    sourceUrl: video.url,
                     mediaType: 1,
                     renderLargerThumbnail: true
                 }
             }
         }, { quoted: mek });
 
-        // Send available resolution options to user
-        const downloadOptions = phub_info.format.map((f, index) => `${index + 1}. ${f.resolution}p`).join('\n');
-        await reply(`*Choose a resolution to download:*\n${downloadOptions}\n\n*Reply with the number of your choice!*`);
-
-        // Wait for user's response
-        const filter = m => m.from === from && !m.quoted;
-        const collected = await conn.awaitMessages(filter, { max: 1, time: 30000 });
-
-        if (collected.size === 0) {
-            return reply('No response received. Please try again.');
-        }
-
-        const choiceIndex = parseInt(collected.first().body) - 1;
-
-        if (isNaN(choiceIndex) || choiceIndex < 0 || choiceIndex >= phub_info.format.length) {
-            return reply('Invalid choice. Please enter a valid number.');
-        }
-
-        const downloadUrl = phub_info.format[choiceIndex].download_url;
-
-        // Send the video to the user
-        await conn.sendMessage(from, { video: { url: downloadUrl }, caption: phub_info.video_title }, { quoted: mek });
-
     } catch (error) {
+        // Handle errors gracefully
         console.error(error);
-        reply('An error occurred while processing your request. Please try again later.');
+        reply(`❌ Error: ${error.response ? error.response.data : error.message}`);
     }
 });
