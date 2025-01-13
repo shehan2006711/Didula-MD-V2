@@ -14,7 +14,7 @@ cmd({
 }, async (conn, mek, m, { from, q }) => {
     let browser;
     try {
-        if (!q) return conn.sendMessage(from, '*Please provide a search query!*', { quoted: mek });
+        if (!q) return conn.sendMessage(from, { text: '*Please provide a search query!*' }, { quoted: mek });
 
         browser = await puppeteer.launch();
         const page = await browser.newPage();
@@ -25,7 +25,7 @@ cmd({
 
         // Extract the first video's link from search results
         const firstVideo = $('.videoWrapper a').first();
-        if (!firstVideo.length) return conn.sendMessage(from, "No results found!", { quoted: mek });
+        if (!firstVideo.length) return conn.sendMessage(from, { text: "No results found!" }, { quoted: mek });
 
         const videoUrl = firstVideo.attr('href');
         await page.goto(videoUrl, { waitUntil: 'domcontentloaded' });
@@ -52,12 +52,12 @@ cmd({
         if (videoSource) {
             await conn.sendMessage(from, { video: { url: videoSource }, caption: title }, { quoted: mek });
         } else {
-            await conn.sendMessage(from, '*Video source not found!*', { quoted: mek });
+            await conn.sendMessage(from, { text: '*Video source not found!*' }, { quoted: mek });
         }
 
     } catch (e) {
         console.error(e);
-        conn.sendMessage(from, '*An error occurred while processing your request. Please try again later.*', { quoted: mek });
+        conn.sendMessage(from, { text: '*An error occurred while processing your request. Please try again later.*' }, { quoted: mek });
     } finally {
         if (browser) {
             await browser.close();
