@@ -12,30 +12,31 @@ cmd({
     use: '.phsearch <query>',
     filename: __filename
 }, async (conn, mek, m, { from, q }) => {
+    let browser;
     try {
-        if (!q) return reply('*Please provide a search query!*');
+        if (!q) return conn.sendMessage(from, '*Please provide a search query!*', { quoted: mek });
 
-        const browser = await puppeteer.launch();
+        browser = await puppeteer.launch();
         const page = await browser.newPage();
-        await page.goto(`https://www.pornhub.com/search?search=${encodeURIComponent(q)}`);
+        await page.goto(`https://www.pornhub.com/search?search=${encodeURIComponent(q)}`, { waitUntil: 'domcontentloaded' });
 
         const content = await page.content();
         const $ = cheerio.load(content);
 
         // Extract the first video's link from search results
         const firstVideo = $('.videoWrapper a').first();
-        if (!firstVideo.length) return reply("No results found!");
+        if (!firstVideo.length) return conn.sendMessage(from, "No results found!", { quoted: mek });
 
         const videoUrl = firstVideo.attr('href');
-        await page.goto(videoUrl);
+        await page.goto(videoUrl, { waitUntil: 'domcontentloaded' });
         const videoContent = await page.content();
 
         // Extract video details
         const videoPage = cheerio.load(videoContent);
-        const title = videoPage('h1.title').text();
-        const views = videoPage('span.views').text();
-        const likes = videoPage('span.likes').text();
-        const dislikes = videoPage('span.dislikes').text();
+        const title = videoPage('h1.title').text().trim();
+        const views = videoPage('span.views').text().trim();
+        const likes = videoPage('span.likes').text().trim();
+        const dislikes = videoPage('span.dislikes').text().trim();
         const videoSource = videoPage('video source').attr('src');
         const thumbnail = videoPage('meta[property="og:image"]').attr('content');
 
@@ -48,11 +49,18 @@ cmd({
         `;
 
         await conn.sendMessage(from, { image: { url: thumbnail || '' }, caption: msg }, { quoted: mek });
-        await conn.sendMessage(from, { video: { url: videoSource }, caption: title }, { quoted: mek });
+        if (videoSource) {
+            await conn.sendMessage(from, { video: { url: videoSource }, caption: title }, { quoted: mek });
+        } else {
+            await conn.sendMessage(from, '*Video source not found!*', { quoted: mek });
+        }
 
-        await browser.close();
     } catch (e) {
-        reply('*Error occurred!*');
-        console.log(e);
+        console.error(e);
+        conn.sendMessage(from, '*An error occurred while processing your request. Please try again later.*', { quoted: mek });
+    } finally {
+        if (browser) {
+            await browser.close();
+        }
     }
 });
