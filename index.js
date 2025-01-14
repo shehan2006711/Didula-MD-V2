@@ -27,7 +27,7 @@ const { sms,downloadMediaMessage } = require('./lib/msg')
 const axios = require('axios')
 const { File } = require('megajs')
 const prefix = '.'
-const store = makeInMemoryStore({})
+
 const ownerNumber = ['94771820962']
 
 //===================SESSION-AUTH============================
