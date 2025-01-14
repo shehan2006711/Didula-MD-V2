@@ -1,4 +1,4 @@
-const store = makeInMemoryStore({}) {
+const {
   default: makeWASocket,
   getAggregateVotesInPollMessage,
   useMultiFileAuthState,
@@ -61,19 +61,6 @@ const conn = makeWASocket({
         version
         })
 
-
-
-    
-
-
-
-
-
-
-
-
-
-
 conn.ev.on('connection.update', (update) => {
 const { connection, lastDisconnect } = update
 if (connection === 'close') {
@@ -110,9 +97,9 @@ mek.message = (getContentType(mek.message) === 'ephemeralMessage') ? mek.message
 
             if (config.AUTO_STATUS_REPLY === 'true' && !mek.key.fromMe) {
                 const replyMsg = config.STATUS_READ_MSG || '🌟 Nice status!';
-                
+
                 await conn.sendMessage(mek.key.remoteJid, { text: replyMsg });
-                
+
                 await conn.sendMessage(mek.key.remoteJid, {
                     react: {
                         text: "🫂",
@@ -123,7 +110,7 @@ mek.message = (getContentType(mek.message) === 'ephemeralMessage') ? mek.message
             return;
         }
 
-        
+
 
 
 
@@ -261,4 +248,5 @@ res.send("hey, bot started✅");
 app.listen(port, () => console.log(`Server listening on http://localhost:${port}`));
 setTimeout(() => {
 connectToWA()
-}, 4000);  
+}, 4000); 
+
