@@ -1,4 +1,4 @@
-const {
+const store = makeInMemoryStore({}) {
   default: makeWASocket,
   getAggregateVotesInPollMessage,
   useMultiFileAuthState,
@@ -27,7 +27,7 @@ const { sms,downloadMediaMessage } = require('./lib/msg')
 const axios = require('axios')
 const { File } = require('megajs')
 const prefix = '.'
-
+const store = makeInMemoryStore({})
 const ownerNumber = ['94771820962']
 
 //===================SESSION-AUTH============================
@@ -60,6 +60,115 @@ const conn = makeWASocket({
         auth: state,
         version
         })
+
+
+  store.bind(conn.ev)
+
+    // Anti-delete feature
+    conn.ev.on('messages.delete', async (message) => {
+        try {
+            const storedMessage = await store.loadMessage(message.keys[0].remoteJid, message.keys[0].id)
+            if (!storedMessage) return
+
+            const deletedBy = message.participant || message.keys[0].remoteJid
+            const chatId = message.keys[0].remoteJid
+
+            let caption = `🗑️ *Anti-Delete Message*\n\n`
+            caption += `*🧑‍💻 Deleted By:* @${deletedBy.split('@')[0]}\n`
+            caption += `*📅 Time:* ${new Date().toLocaleString()}\n\n`
+
+            if (storedMessage.message?.conversation) {
+                caption += `*Message:* ${storedMessage.message.conversation}`
+                await conn.sendMessage(chatId, {
+                    text: caption,
+                    mentions: [deletedBy]
+                })
+            } 
+            else if (storedMessage.message?.extendedTextMessage) {
+                caption += `*Message:* ${storedMessage.message.extendedTextMessage.text}`
+                await conn.sendMessage(chatId, {
+                    text: caption,
+                    mentions: [deletedBy]
+                })
+            }
+            else if (storedMessage.message?.imageMessage) {
+                const media = await downloadMediaMessage(
+                    storedMessage,
+                    'buffer',
+                    {},
+                    {
+                        reuploadRequest: conn.updateMediaMessage
+                    }
+                )
+                caption += `*Caption:* ${storedMessage.message.imageMessage.caption || ''}`
+                await conn.sendMessage(chatId, {
+                    image: media,
+                    caption: caption,
+                    mentions: [deletedBy]
+                })
+            }
+            else if (storedMessage.message?.videoMessage) {
+                const media = await downloadMediaMessage(
+                    storedMessage,
+                    'buffer',
+                    {},
+                    {
+                        reuploadRequest: conn.updateMediaMessage
+                    }
+                )
+                caption += `*Caption:* ${storedMessage.message.videoMessage.caption || ''}`
+                await conn.sendMessage(chatId, {
+                    video: media,
+                    caption: caption,
+                    mentions: [deletedBy]
+                })
+            }
+            else if (storedMessage.message?.stickerMessage) {
+                const media = await downloadMediaMessage(
+                    storedMessage,
+                    'buffer',
+                    {},
+                    {
+                        reuploadRequest: conn.updateMediaMessage
+                    }
+                )
+                await conn.sendMessage(chatId, { sticker: media })
+                await conn.sendMessage(chatId, {
+                    text: caption,
+                    mentions: [deletedBy]
+                })
+            }
+            else if (storedMessage.message?.audioMessage) {
+                const media = await downloadMediaMessage(
+                    storedMessage,
+                    'buffer',
+                    {},
+                    {
+                        reuploadRequest: conn.updateMediaMessage
+                    }
+                )
+                await conn.sendMessage(chatId, { audio: media, mimetype: 'audio/mp4' })
+                await conn.sendMessage(chatId, {
+                    text: caption,
+                    mentions: [deletedBy]
+                })
+            }
+        } catch (error) {
+            console.error('Error in delete event:', error)
+        }
+    })
+
+
+
+
+
+
+
+
+
+
+
+
 
 conn.ev.on('connection.update', (update) => {
 const { connection, lastDisconnect } = update
