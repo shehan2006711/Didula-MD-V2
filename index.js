@@ -62,8 +62,6 @@ const conn = makeWASocket({
         })
 
 
-  store.bind(conn.ev)
-
     // Anti-delete feature
     conn.ev.on('messages.delete', async (message) => {
         try {
