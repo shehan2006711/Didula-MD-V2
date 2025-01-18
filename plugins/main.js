@@ -947,8 +947,6 @@ async(conn, mek, m, { from, isGroup, groupMetadata, groupName, participants, gro
     }
 });
 
-const {cmd , commands} = require('../command')
-const { fetchJson } = require('../lib/functions')
 
 const apilink = 'https://api-pink-venom.vercel.app'
 const caption = `> ᴩʀᴏᴊᴇᴄᴛꜱ ᴏꜰ ᴅɪᴅᴜʟᴀ ʀᴀꜱʜᴍɪᴋᴀ`
@@ -1486,9 +1484,6 @@ cmd({
     }
 });
 
-const config = require('../config')
-const {cmd , commands} = require('../command')
-const {sleep} = require('../lib/functions')
 
 cmd({
     pattern: "restart",
@@ -1508,15 +1503,7 @@ reply(`${e}`)
 }
 })
 
-const {
-  fetchJson
-} = require('../lib/functions')
-const config = require('../config')
-const {
-  cmd,
-  commands
-} = require('../command')
-const yts = require('yt-search')
+
 
 cmd( {
   pattern: "song",
