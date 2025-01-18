@@ -52,8 +52,6 @@ async(conn, mek, m, { from, reply }) => {
 });
 
 
-const { cmd, commands } = require('../command');
-const config = require('../config'); // Ensure you import your config file
 
 cmd({
     pattern: "allmenu",
@@ -1181,8 +1179,6 @@ reply(`${e}`)
 })
 
 
-const { cmd, commands } = require('../command');
-const config = require('../config'); // Ensure you import your config file
 
 cmd({
     pattern: "downloadmenu",
@@ -1329,8 +1325,6 @@ cmd({
 });
 
 
-const config = require('../config')
-const { cmd, commands } = require('../command')
 
 cmd({
     pattern: "opentime",
@@ -1439,9 +1433,6 @@ try{
     }
 })
 
-const config = require('../config');
-const { cmd, commands } = require('../command');
-const pdfUrl = "https://i.ibb.co/tC37Q7B/20241220-122443.jpg";
 
 cmd({
     pattern: "alive",
