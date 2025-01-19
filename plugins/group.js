@@ -4,7 +4,7 @@
 const { cmd, commands } = require('../command');
 const config = require('../config');
 const { fetchJson, getBuffer, getGroupAdmins } = require('../lib/functions');
-
+const fs = require('fs');
 
 
 cmd({
