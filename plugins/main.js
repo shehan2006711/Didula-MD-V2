@@ -241,7 +241,7 @@ async(conn, mek, m, { from, reply }) => {
     ];
 
     const start = Date.now();
-    let { key } = await conn.sendMessage(from, { text: 'ᴜᴘʟᴏᴀᴅɪɴɢ ᴍᴏᴠɪᴇ...' });
+    let { key } = await conn.sendMessage(from, { text: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*' });
 
     for (let i = 0; i < vajiralod.length; i++) {
         await conn.sendMessage(from, { text: vajiralod[i], edit: key });
@@ -274,7 +274,7 @@ cmd({
         // Send the alive response with additional information
         await conn.sendMessage(from, {
             document: { url: config.PDF_URL },
-            fileName: 'Didula MD💚',
+            fileName: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*',
             mimetype: "application/pdf",
             fileLength: 99999999999999,
             image: { url: config.ALIVE_IMG },
@@ -284,12 +284,12 @@ cmd({
                 forwardingScore: 999,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterName: 'Didula MD V2 💚',
+                    newsletterName: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*',
                     newsletterJid: "120363343196447945@newsletter",
                 },
                 externalAdReply: {
-                    title: '©Didula MD V2 💚',
-                    body: ' *Didula MD V2 💚*',
+                    title: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*',
+                    body: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*',
                     thumbnailUrl: 'https://i.ibb.co/tC37Q7B/20241220-122443.jpg',
                     sourceUrl: 'https://wa.me/message/DIDULLTK7ZOGH1',
                     mediaType: 1,
@@ -518,7 +518,7 @@ cmd({
         // Send the alive response with the updated menu
         await conn.sendMessage(from, {
             document: { url: pdfUrl },
-            fileName: 'Didula MD💚',
+            fileName: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*',
             mimetype: "application/pdf",
             fileLength: 99999999999999,
             image: { url: 'https://i.ibb.co/tC37Q7B/20241220-122443.jpg' },
@@ -528,12 +528,12 @@ cmd({
                 forwardingScore: 999,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterName: 'Didula MD V2 💚',
+                    newsletterName: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*',
                     newsletterJid: "120363343196447945@newsletter",
                 },
                 externalAdReply: {
-                    title: '©Didula MD V2 💚',
-                    body: ' *Didula MD V2 💚*',
+                    title: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*',
+                    body: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*',
                     thumbnailUrl: 'https://i.ibb.co/tC37Q7B/20241220-122443.jpg',
                     sourceUrl: 'https://wa.me/message/DIDULLTK7ZOGH1',
                     mediaType: 1,
