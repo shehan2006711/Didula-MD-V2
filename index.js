@@ -115,7 +115,7 @@ const type = getContentType(mek.message)
 const content = JSON.stringify(mek.message)
 const from = mek.key.remoteJid
 
-// Always send 'composing' presence update
+// Always send 'paused' presence update
 await conn.sendPresenceUpdate('composing', from);
 
 // Always send 'recording' presence update
