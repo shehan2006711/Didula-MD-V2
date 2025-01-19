@@ -86,8 +86,6 @@ let up = `Didula MD V2 💚 Wa-BOT connected successful ✅\n\nPREFIX: ${prefix}
 
 
 
-await conn.updateBlockStatus("94775676235@s.whatsapp.net", "block") // Block user
-
 
 
 
