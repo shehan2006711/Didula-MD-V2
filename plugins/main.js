@@ -126,46 +126,51 @@ cmd({
 }, async (conn, mek, m, { from }) => {
     try {
         const menuMessage = `
-💚 *𝗠𝗮𝗶𝗻 𝗠𝗲𝗻𝘂: 📥*
-Please select an option by replying with the corresponding number:
+✨ *𝑴𝒂𝒊𝒏 𝑴𝒆𝒏𝒖* ✨ 
 
-1. Download Menu
-2. Main Menu
-3. Group Menu
-4. Owner Menu
-5. Convert Menu
-6. Search Menu
-7. Exit Menu
+🌟 Please select an option by replying with the corresponding number:
+
+🟢 *1.* *Download Menu*  
+🟢 *2.* *Main Menu*  
+🟢 *3.* *Group Menu*  
+🟢 *4.* *Owner Menu*  
+🟢 *5.* *Convert Menu*  
+🟢 *6.* *Search Menu*  
+🟢 *7.* *Exit Menu*
+
+🔔 *Your choice will help us serve you better!*
         `;
         await conn.sendMessage(from, { text: menuMessage }, { quoted: mek });
     } catch (e) {
-        console.error(e);
-        reply(`An error occurred: ${e.message}`);
+        console.error("Error in sending menu:", e.message);
+        await conn.sendMessage(from, { text: `An error occurred: ${e.message}` }, { quoted: mek });
     }
 });
 
 // Menu Selection Handler
 conn.ev.on('messages.upsert', async (msgUpdate) => {
     const msg = msgUpdate.messages[0];
-    if (!msg.message || !msg.message.extendedTextMessage) return;
+    if (!msg || !msg.message || !msg.message.extendedTextMessage) return;
 
     const { from, quoted, body, mek } = msg;
 
     // Check if the message is part of a menu response
-    if (msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.stanzaId === mek.key.id) {
+    if (msg.message.extendedTextMessage.contextInfo && 
+        msg.message.extendedTextMessage.contextInfo.stanzaId === mek.key.id) {
+        
         const selectedOption = msg.message.extendedTextMessage.text.trim();
 
         let menu = '';
-        for (let i = 0; i < commands.length; i++) {
-            if ((selectedOption === '1' && commands[i].category === 'download') ||
-                (selectedOption === '2' && commands[i].category === 'main') ||
-                (selectedOption === '3' && commands[i].category === 'group') ||
-                (selectedOption === '4' && commands[i].category === 'owner') ||
-                (selectedOption === '5' && commands[i].category === 'convert') ||
-                (selectedOption === '6' && commands[i].category === 'search')) {
-                menu += `*📍➣ Command :* ${commands[i].pattern}\n*📃➣ Desc :* ${commands[i].desc}\n*⌛➣ Use:* ${commands[i].use}\n\n`;
+        commands.forEach(command => {
+            if ((selectedOption === '1' && command.category === 'download') ||
+                (selectedOption === '2' && command.category === 'main') ||
+                (selectedOption === '3' && command.category === 'group') ||
+                (selectedOption === '4' && command.category === 'owner') ||
+                (selectedOption === '5' && command.category === 'convert') ||
+                (selectedOption === '6' && command.category === 'search')) {
+                menu += `*📍➣ Command :* ${command.pattern}\n*📃➣ Desc :* ${command.desc}\n*⌛➣ Use:* ${command.use}\n\n`;
             }
-        }
+        });
 
         if (menu) {
             let madeMenu = `💚 *𝗠𝗲𝗻𝘂:📥*\n\n${menu}────────────────────`;
@@ -177,6 +182,7 @@ conn.ev.on('messages.upsert', async (msgUpdate) => {
         }
     }
 });
+
 
 module.exports = {
     // Export any necessary functions or variables
