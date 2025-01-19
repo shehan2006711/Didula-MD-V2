@@ -1,7 +1,7 @@
 
 // main.js - All Main Category Commands
 
-const { cmd } = require('../command');
+const { cmd, commands } = require('../command');
 const config = require('../config');
 const si = require('systeminformation');
 
