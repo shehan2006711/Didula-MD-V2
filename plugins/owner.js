@@ -1,7 +1,7 @@
 
 // owner.js - All Owner Category Commands
 
-const { cmd } = require('../command');
+const { cmd, commands } = require('../command');
 const config = require('../config');
 
 // Block User Command
