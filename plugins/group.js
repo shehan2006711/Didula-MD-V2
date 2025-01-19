@@ -7,6 +7,18 @@ const { fetchJson, getBuffer, getGroupAdmins } = require('../lib/functions');
 const fs = require('fs');
 
 
+
+// Helper function to check permissions
+const checkPermissions = (isGroup, isAdmins, isOwner, isBotAdmins) => {
+    if (!isGroup) return 'This command can only be used in groups.';
+    if (!isAdmins && !isOwner) return 'This command can only be used by group admins.';
+    if (!isBotAdmins) return 'Bot must be admin to use this command.';
+    return null;
+};
+
+
+
+
 cmd({
     pattern: "join",
     fromMe: true,  // Only bot owner can use this command
