@@ -506,7 +506,7 @@ cmd({
 *├* *GROUPMENU*
 *├* *OWNERMENU*
 *├* *DOWNLOAD‎MENU*
-*├& *CONVERTMENU*
+*├* *CONVERTMENU*
 *├* *OTHERMENU*
 *╰┈───────────────•*
 
