@@ -1,7 +1,11 @@
-
-const { cmd, commands } = require('../command'); // Ensure the path is correct
+const { cmd, commands } = require('../command');
+const scraper = require("../lib/scraperd");
 const axios = require('axios');
+const fetch = require('node-fetch');
 const { fetchJson, getBuffer } = require('../lib/functions');
+const { lookup } = require('mime-types');
+const fs = require('fs');
+const path = require('path');
 const yts = require('yt-search'); // For YouTube search
 
 // Download APK
