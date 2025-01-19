@@ -7,6 +7,8 @@ const { lookup } = require('mime-types');
 const fs = require('fs');
 const path = require('path');
 const yts = require('yt-search'); // For YouTube search
+const cheerio = require('cheerio'); // Import cheerio for HTML parsing
+
 
 // Download APK
 cmd({
