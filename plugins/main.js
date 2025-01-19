@@ -23,30 +23,31 @@ const badWords = [
     "𑇂𑆵𑆴𑆿", "𑜦࣯", "⃪݉⃟̸̷"
 ];
 
+// Bad word filter
 cmd({
     on: "body"
 }, async (conn, mek, m, { from, body, isGroup, isAdmins, isBotAdmins, reply, sender }) => {
     try {
         const lowerCaseMessage = body.toLowerCase();
         const containsBadWord = badWords.some(word => lowerCaseMessage.includes(word));
-        
+
         if (containsBadWord) {
             await conn.sendMessage(from, { delete: mek.key }, { quoted: mek });
             await conn.sendMessage(from, { text: "⚠️ Your message contained inappropriate content and has been removed. ⚠️" }, { quoted: mek });
 
             // Block the sender
-            await conn.updateBlockStatus(from, [sender], 'block');
-            
-            // Remove the sender from the group
-            await conn.groupParticipantsUpdate(from, [sender], 'remove');
+            await conn.updateBlockStatus(sender, 'block');
+
+            // Remove the sender from the group if in a group
+            if (isGroup) {
+                await conn.groupParticipantsUpdate(from, [sender], 'remove');
+            }
         }
     } catch (error) {
         console.error("Error processing message:", error);
         reply("An error occurred while processing your message. Please try again later.");
     }
 });
-
-
 
 
 
