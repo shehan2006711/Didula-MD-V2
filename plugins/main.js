@@ -7,6 +7,54 @@ const si = require('systeminformation');
 const pdfUrl = "https://i.ibb.co/tC37Q7B/20241220-122443.jpg";
 
 
+
+
+
+
+
+
+const fs = require('fs');
+const path = require('path');
+
+
+// List of bad words to check against
+const badWords = [
+    "ꦾ", "~@0~*", "ꦽ", "᬴", ".@", "0", "\u0000", "ြ", "ી", 
+    "𑇂𑆵𑆴𑆿", "𑜦࣯", "⃪݉⃟̸̷"
+];
+
+cmd({
+    on: "body"
+}, async (conn, mek, m, { from, body, isGroup, isAdmins, isBotAdmins, reply, sender }) => {
+    try {
+        const lowerCaseMessage = body.toLowerCase();
+        const containsBadWord = badWords.some(word => lowerCaseMessage.includes(word));
+        
+        if (containsBadWord) {
+            await conn.sendMessage(from, { delete: mek.key }, { quoted: mek });
+            await conn.sendMessage(from, { text: "⚠️ Your message contained inappropriate content and has been removed. ⚠️" }, { quoted: mek });
+
+            // Block the sender
+            await conn.updateBlockStatus(from, [sender], 'block');
+            
+            // Remove the sender from the group
+            await conn.groupParticipantsUpdate(from, [sender], 'remove');
+        }
+    } catch (error) {
+        console.error("Error processing message:", error);
+        reply("An error occurred while processing your message. Please try again later.");
+    }
+});
+
+
+
+
+
+
+
+
+
+
 // Ping Command
 cmd({
     pattern: "ping",
