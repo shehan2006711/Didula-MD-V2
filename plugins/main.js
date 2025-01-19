@@ -4,6 +4,8 @@
 const { cmd, commands } = require('../command');
 const config = require('../config');
 const si = require('systeminformation');
+const pdfUrl = "https://i.ibb.co/tC37Q7B/20241220-122443.jpg";
+
 
 // Ping Command
 cmd({
@@ -264,7 +266,6 @@ cmd({
 
 
 
-const pdfUrl = "https://i.ibb.co/tC37Q7B/20241220-122443.jpg";
 
 cmd({
     pattern: "menu",
