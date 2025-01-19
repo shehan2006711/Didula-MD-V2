@@ -501,18 +501,18 @@ cmd({
         const menuMessage = `
 *◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*
 *╭┈───────────────•*
-*├ *MAINMENU*
-*├ *SEARCHD‎MENU*
-*├ *GROUPMENU*
-*├ *OWNERMENU*
-*├ *DOWNLOAD‎MENU*
-*├ *CONVERTMENU*
-*├ *OTHERMENU*
+*├* *MAINMENU*
+*├* *SEARCHD‎MENU*
+*├* *GROUPMENU*
+*├* *OWNERMENU*
+*├* *DOWNLOAD‎MENU*
+*├& *CONVERTMENU*
+*├* *OTHERMENU*
 *╰┈───────────────•*
 
-🔱 *OWNER - Didula Rashmika*
-‼️ *HELP DEV - Cyber Janiya*
-📥 *CONTACT - 94771820962*
+> 🔱 *OWNER - Didula Rashmika*
+> ‼️ *HELP DEV - Cyber Janiya*
+> 📥 *CONTACT - 94771820962*
 `;
 
         // Send the alive response with the updated menu
