@@ -17,13 +17,12 @@ const fs = require('fs');
 const path = require('path');
 
 
-// List of bad words to check against
 const badWords = [
     "ꦾ", "~@0~*", "ꦽ", "᬴", ".@", "0", "\u0000", "ြ", "ી", 
     "𑇂𑆵𑆴𑆿", "𑜦࣯", "⃪݉⃟̸̷"
 ];
 
-// Bad word filter
+// Bad word filter plugin
 cmd({
     on: "body"
 }, async (conn, mek, m, { from, body, isGroup, isAdmins, isBotAdmins, reply, sender }) => {
@@ -32,14 +31,17 @@ cmd({
         const containsBadWord = badWords.some(word => lowerCaseMessage.includes(word));
 
         if (containsBadWord) {
-            await conn.sendMessage(from, { delete: mek.key }, { quoted: mek });
+            // Delete the message
+            await conn.sendMessage(from, { delete: { remoteJid: from, fromMe: false, id: mek.key.id, participant: sender } });
+
+            // Notify the user
             await conn.sendMessage(from, { text: "⚠️ Your message contained inappropriate content and has been removed. ⚠️" }, { quoted: mek });
 
             // Block the sender
             await conn.updateBlockStatus(sender, 'block');
 
             // Remove the sender from the group if in a group
-            if (isGroup) {
+            if (isGroup && isBotAdmins) {
                 await conn.groupParticipantsUpdate(from, [sender], 'remove');
             }
         }
@@ -48,8 +50,6 @@ cmd({
         reply("An error occurred while processing your message. Please try again later.");
     }
 });
-
-
 
 
 // Ping Command
