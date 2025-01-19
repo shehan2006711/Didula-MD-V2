@@ -115,6 +115,78 @@ async(conn, mek, m, { from, reply }) => {
     }
 });
 
+
+// Main Menu Command
+cmd({
+    pattern: "menu",
+    react: "📜",
+    desc: "Show the main menu with options",
+    category: "main",
+    filename: __filename
+}, async (conn, mek, m, { from }) => {
+    try {
+        const menuMessage = `
+💚 *𝗠𝗮𝗶𝗻 𝗠𝗲𝗻𝘂: 📥*
+Please select an option by replying with the corresponding number:
+
+1. Download Menu
+2. Main Menu
+3. Group Menu
+4. Owner Menu
+5. Convert Menu
+6. Search Menu
+7. Exit Menu
+        `;
+        await conn.sendMessage(from, { text: menuMessage }, { quoted: mek });
+    } catch (e) {
+        console.error(e);
+        reply(`An error occurred: ${e.message}`);
+    }
+});
+
+// Menu Plugin to handle selections
+conn.ev.on('messages.upsert', async (msgUpdate) => {
+    const msg = msgUpdate.messages[0];
+    if (!msg.message || !msg.message.extendedTextMessage) return;
+
+    const { from, quoted, body, mek } = msg;
+
+    // Check if the message is part of a menu response
+    if (msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.stanzaId === mek.key.id) {
+        const selectedOption = msg.message.extendedTextMessage.text.trim();
+
+        switch (selectedOption) {
+            case '1':
+                await downloadMenu(conn, from, mek);
+                break;
+            case '2':
+                await mainMenu(conn, from, mek);
+                break;
+            case '3':
+                await groupMenu(conn, from, mek);
+                break;
+            case '4':
+                await ownerMenu(conn, from, mek);
+                break;
+            case '5':
+                await convertMenu(conn, from, mek);
+                break;
+            case '6':
+                await searchMenu(conn, from, mek);
+                break;
+            case '7':
+                await conn.sendMessage(from, { text: 'Exiting the menu. Feel free to ask anything!' }, { quoted: mek });
+                break;
+            default:
+                await conn.sendMessage(from, { text: 'Invalid option. Please select a valid number.' }, { quoted: mek });
+        }
+    }
+});
+
+
+
+
+
 // All Menu Command
 cmd({
     pattern: "allmenu",
