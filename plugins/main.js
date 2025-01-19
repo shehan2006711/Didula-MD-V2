@@ -117,72 +117,221 @@ async(conn, mek, m, { from, reply }) => {
 
 
 // Unified Menu Command
+
 cmd({
-    pattern: "menu",
-    react: "📜",
-    desc: "Show the menu with options",
+    pattern: "downloadmenu",
+    react: "👾",
+    desc: "get cmd list",
     category: "main",
     filename: __filename
-}, async (conn, mek, m, { from }) => {
+}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
     try {
-        const menuMessage = `
-✨ *𝑴𝒂𝒊𝒏 𝑴𝒆𝒏𝒖* ✨ 
+        let menu = '';
+        for (let i = 0; i < commands.length; i++) {
+            if (commands[i].category === 'download' && !commands[i].dontAddCommandList) {
+                menu += `*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*\n*╭┈───────────────•*\n*├ 2* • *DOWNLOAD‎*\n*├ Command :* ${commands[i].pattern}\n*├ Desc :* ${commands[i].desc}\n*├ Use:* ${commands[i].use}\n*╰┈───────────────•*\n\n`;
+            }
+        }
 
-🌟 Please select an option by replying with the corresponding number:
+        let madeMenu = menu;
 
-🟢 *1.* *Download Menu*  
-🟢 *2.* *Main Menu*  
-🟢 *3.* *Group Menu*  
-🟢 *4.* *Owner Menu*  
-🟢 *5.* *Convert Menu*  
-🟢 *6.* *Search Menu*  
-🟢 *7.* *Exit Menu*
-
-🔔 *Your choice will help us serve you better!*
-        `;
-        await conn.sendMessage(from, { text: menuMessage }, { quoted: mek });
+        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
     } catch (e) {
-        console.error("Error in sending menu:", e.message);
-        await conn.sendMessage(from, { text: `An error occurred: ${e.message}` }, { quoted: mek });
+        console.error(e);
+        reply(`An error occurred: ${e.message}`);
     }
 });
 
-// Menu Selection Handler
-conn.ev.on('messages.upsert', async (msgUpdate) => {
-    const msg = msgUpdate.messages[0];
-    if (!msg || !msg.message || !msg.message.extendedTextMessage) return;
-
-    const { from, quoted, body, mek } = msg;
-
-    // Check if the message is part of a menu response
-    if (msg.message.extendedTextMessage.contextInfo && 
-        msg.message.extendedTextMessage.contextInfo.stanzaId === mek.key.id) {
-
-        const selectedOption = msg.message.extendedTextMessage.text.trim();
-
+cmd({
+    pattern: "mainmenu",
+    react: "👾",
+    desc: "get cmd list",
+    category: "main",
+    filename: __filename
+}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+    try {
         let menu = '';
-        commands.forEach(command => {
-            if ((selectedOption === '1' && command.category === 'download') ||
-                (selectedOption === '2' && command.category === 'main') ||
-                (selectedOption === '3' && command.category === 'group') ||
-                (selectedOption === '4' && command.category === 'owner') ||
-                (selectedOption === '5' && command.category === 'convert') ||
-                (selectedOption === '6' && command.category === 'search')) {
-                menu += `*📍➣ Command :* ${command.pattern}\n*📃➣ Desc :* ${command.desc}\n*⌛➣ Use:* ${command.use || 'N/A'}\n\n`;
+        for (let i = 0; i < commands.length; i++) {
+            if (commands[i].category === 'main' && !commands[i].dontAddCommandList) {
+                menu += `*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*\n*╭┈───────────────•*\n*├ 1* • *MAIN*\n*├ Command :* ${commands[i].pattern}\n*├ Desc :* ${commands[i].desc}\n*├ Use:* ${commands[i].use}\n*╰┈───────────────•*\n\n`;
+            }
+        }
+
+        let madeMenu = menu;
+
+        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
+    } catch (e) {
+        console.error(e);
+        reply(`An error occurred: ${e.message}`);
+    }
+});
+
+cmd({
+    pattern: "groupmenu",
+    react: "👾",
+    desc: "get cmd list",
+    category: "main",
+    filename: __filename
+}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+    try {
+        let menu = '';
+        for (let i = 0; i < commands.length; i++) {
+            if (commands[i].category === 'group' && !commands[i].dontAddCommandList) {
+                menu += `*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*\n*╭┈───────────────•*\n*├ 3* • *GROUPS*\n*├ Command :* ${commands[i].pattern}\n*├ Desc :* ${commands[i].desc}\n*├ Use:* ${commands[i].use}\n*╰┈───────────────•*\n\n`;
+            }
+        }
+
+        let madeMenu = menu;
+
+        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
+    } catch (e) {
+        console.error(e);
+        reply(`An error occurred: ${e.message}`);
+    }
+});
+
+cmd({
+    pattern: "ownermenu",
+    react: "👾",
+    desc: "get cmd list",
+    category: "main",
+    filename: __filename
+}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+    try {
+        let menu = '';
+        for (let i = 0; i < commands.length; i++) {
+            if (commands[i].category === 'owner' && !commands[i].dontAddCommandList) {
+                menu += `*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*\n*╭┈───────────────•*\n*├ 1* • *OWNER*\n*├ Command :* ${commands[i].pattern}\n*├ Desc :* ${commands[i].desc}\n*├ Use:* ${commands[i].use}\n*╰┈───────────────•*\n\n`;
+            }
+        }
+
+        let madeMenu = menu;
+
+        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
+    } catch (e) {
+        console.error(e);
+        reply(`An error occurred: ${e.message}`);
+    }
+});
+
+cmd({
+    pattern: "convertmenu",
+    react: "👾",
+    desc: "get cmd list",
+    category: "main",
+    filename: __filename
+}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+    try {
+        let menu = '';
+        for (let i = 0; i < commands.length; i++) {
+            if (commands[i].category === 'convert' && !commands[i].dontAddCommandList) {
+                menu += `*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*\n*╭┈───────────────•*\n*├ 6* • *CONVERT*\n*├ Command :* ${commands[i].pattern}\n*├ Desc :* ${commands[i].desc}\n*├ Use:* ${commands[i].use}\n*╰┈───────────────•*\n\n`;
+            }
+        }
+
+        let madeMenu = menu;
+
+        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
+    } catch (e) {
+        console.error(e);
+        reply(`An error occurred: ${e.message}`);
+    }
+});
+
+cmd({
+    pattern: "searchmenu",
+    react: "👾",
+    desc: "get cmd list",
+    category: "main",
+    filename: __filename
+}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+    try {
+        let menu = '';
+        for (let i = 0; i < commands.length; i++) {
+            if (commands[i].category === 'search' && !commands[i].dontAddCommandList) {
+                menu += `*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*\n*╭┈───────────────•*\n*├ 9* • *OTHER*\n*├ Command :* ${commands[i].pattern}\n*├ Desc :* ${commands[i].desc}\n*├ Use:* ${commands[i].use}\n*╰┈───────────────•*\n\n`;
+            }
+        }
+
+        let madeMenu = menu;
+
+        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
+    } catch (e) {
+        console.error(e);
+        reply(`An error occurred: ${e.message}`);
+    }
+});
+
+
+
+const pdfUrl = "https://i.ibb.co/tC37Q7B/20241220-122443.jpg";
+
+cmd({
+    pattern: "menu",
+    desc: "Check commands.",
+    category: "main",
+    react: "✅",
+    filename: __filename
+}, async (conn, mek, m, { from, quoted, reply }) => {
+    try {
+        // Send a message indicating the bot is alive
+        const message = await conn.sendMessage(from, { text: '`𝗗𝗶𝗱𝘂𝗹𝗮 𝗠𝗗 𝗠𝗲𝗻𝘂💚`' });
+
+        // Simulate some processing time
+        const startTime = Date.now();
+        await new Promise(resolve => setTimeout(resolve, 500)); // Simulating a delay
+        const endTime = Date.now();
+        const ping = endTime - startTime;
+
+        // New menu message
+        const menuMessage = `
+*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*
+*╭┈───────────────•*
+*├ *MAINMENU*
+*├ *SEARCHD‎MENU*
+*├ *GROUPMENU*
+*├ *OWNERMENU*
+*├ *DOWNLOAD‎MENU*
+*├ *CONVERTMENU*
+*├ *OTHERMENU*
+*╰┈───────────────•*
+
+🔱 *OWNER - Didula Rashmika*
+‼️ *HELP DEV - Cyber Janiya*
+📥 *CONTACT - 94771820962*
+`;
+
+        // Send the alive response with the updated menu
+        await conn.sendMessage(from, {
+            document: { url: pdfUrl },
+            fileName: 'Didula MD💚',
+            mimetype: "application/pdf",
+            fileLength: 99999999999999,
+            image: { url: 'https://i.ibb.co/tC37Q7B/20241220-122443.jpg' },
+            pageCount: 2024,
+            caption: menuMessage,
+            contextInfo: {
+                forwardingScore: 999,
+                isForwarded: true,
+                forwardedNewsletterMessageInfo: {
+                    newsletterName: 'Didula MD V2 💚',
+                    newsletterJid: "120363343196447945@newsletter",
+                },
+                externalAdReply: {
+                    title: '©Didula MD V2 💚',
+                    body: ' *Didula MD V2 💚*',
+                    thumbnailUrl: 'https://i.ibb.co/tC37Q7B/20241220-122443.jpg',
+                    sourceUrl: 'https://wa.me/message/DIDULLTK7ZOGH1',
+                    mediaType: 1,
+                    renderLargerThumbnail: true
+                }
             }
         });
-
-        if (menu) {
-            let madeMenu = `💚 *𝗠𝗲𝗻𝘂:📥*\n\n${menu}────────────────────`;
-            await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
-        } else if (selectedOption === '7') {
-            await conn.sendMessage(from, { text: 'Exiting the menu. Feel free to ask anything!' }, { quoted: mek });
-        } else {
-            await conn.sendMessage(from, { text: 'Invalid option. Please select a valid number.' }, { quoted: mek });
-        }
+    } catch (e) {
+        console.error(e);
+        reply(`${e}`);
     }
 });
-
 
 module.exports = {
     // Export any necessary functions or variables
