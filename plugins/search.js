@@ -7,6 +7,42 @@ const axios = require('axios');
 const g_i_s = require('g-i-s');
 const cheerio = require('cheerio');
 
+
+
+cmd({
+    pattern: "yts",
+    desc: "Search YouTube videos",
+    use: ".yts <query>",
+    category: "search",
+    filename: __filename
+}, async (conn, mek, m, { from, q, reply }) => {
+    try {
+        if (!q) return reply('⛔ Please provide a search query!');
+        
+        const searchResults = await yts(q);
+        const videos = searchResults.videos.slice(0, 5); // Get the top 5 results
+        
+        if (videos.length === 0) {
+            return reply('No results found.');
+        }
+        
+        let resultMessage = '🎥 *YouTube Search Results:*\n\n';
+        videos.forEach((video, index) => {
+            resultMessage += `${index + 1}. [${video.title}](${video.url}) - ${video.author.name}\n`;
+        });
+        
+        reply(resultMessage);
+    } catch (e) {
+        console.error(e);
+        reply(`Error: ${e.message}`);
+    }
+});
+
+
+
+
+
+
 // Image Search Command
 cmd({
     pattern: "img",
