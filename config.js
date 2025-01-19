@@ -7,6 +7,7 @@ function convertToBool(text, fault = 'true') {
 module.exports = {
 AUTO_READ_STATUS: process.env.AUTO_READ_STATUS || "true",
 STATUS_READ_MSG: process.env.STATUS_READ_MSG || "Didula MD V2 💚",
+ANTI_DELETE: process.env.ANTI_DELETE || "true",
 FOOTER: process.env.FOOTER || "Didula MD V2 💚",
 AUTO_STATUS_REPLY: process.env.AUTO_STATUS_REPLY || "true",
 IMAGE_LIMIT: process.env.IMAGE_LIMIT || "3",
