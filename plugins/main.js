@@ -52,10 +52,6 @@ cmd({
 
 
 
-
-
-
-
 // Ping Command
 cmd({
     pattern: "ping",
