@@ -157,7 +157,7 @@ conn.ev.on('messages.upsert', async (msgUpdate) => {
     // Check if the message is part of a menu response
     if (msg.message.extendedTextMessage.contextInfo && 
         msg.message.extendedTextMessage.contextInfo.stanzaId === mek.key.id) {
-        
+
         const selectedOption = msg.message.extendedTextMessage.text.trim();
 
         let menu = '';
@@ -168,7 +168,7 @@ conn.ev.on('messages.upsert', async (msgUpdate) => {
                 (selectedOption === '4' && command.category === 'owner') ||
                 (selectedOption === '5' && command.category === 'convert') ||
                 (selectedOption === '6' && command.category === 'search')) {
-                menu += `*📍➣ Command :* ${command.pattern}\n*📃➣ Desc :* ${command.desc}\n*⌛➣ Use:* ${command.use}\n\n`;
+                menu += `*📍➣ Command :* ${command.pattern}\n*📃➣ Desc :* ${command.desc}\n*⌛➣ Use:* ${command.use || 'N/A'}\n\n`;
             }
         });
 
