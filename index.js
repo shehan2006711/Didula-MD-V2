@@ -237,7 +237,7 @@ command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, i
 
 
 conn.ev.on('messages.delete', async (message) => {
-    if (message.remoteJid.endsWith('@g.us')) {
+    if (config.ANTI_DELETE === "true" && message.remoteJid.endsWith('@g.us')) {
         try {
             const deletedMessage = await conn.loadMessage(message.remoteJid, message.id)
             if (deletedMessage) {
