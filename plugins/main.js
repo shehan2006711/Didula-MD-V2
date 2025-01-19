@@ -116,11 +116,11 @@ async(conn, mek, m, { from, reply }) => {
 });
 
 
-// Main Menu Command
+// Unified Menu Command
 cmd({
     pattern: "menu",
     react: "📜",
-    desc: "Show the main menu with options",
+    desc: "Show the menu with options",
     category: "main",
     filename: __filename
 }, async (conn, mek, m, { from }) => {
@@ -144,7 +144,7 @@ Please select an option by replying with the corresponding number:
     }
 });
 
-// Menu Plugin to handle selections
+// Menu Selection Handler
 conn.ev.on('messages.upsert', async (msgUpdate) => {
     const msg = msgUpdate.messages[0];
     if (!msg.message || !msg.message.extendedTextMessage) return;
@@ -155,222 +155,26 @@ conn.ev.on('messages.upsert', async (msgUpdate) => {
     if (msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.stanzaId === mek.key.id) {
         const selectedOption = msg.message.extendedTextMessage.text.trim();
 
-        switch (selectedOption) {
-            case '1':
-                await downloadMenu(conn, from, mek);
-                break;
-            case '2':
-                await mainMenu(conn, from, mek);
-                break;
-            case '3':
-                await groupMenu(conn, from, mek);
-                break;
-            case '4':
-                await ownerMenu(conn, from, mek);
-                break;
-            case '5':
-                await convertMenu(conn, from, mek);
-                break;
-            case '6':
-                await searchMenu(conn, from, mek);
-                break;
-            case '7':
-                await conn.sendMessage(from, { text: 'Exiting the menu. Feel free to ask anything!' }, { quoted: mek });
-                break;
-            default:
-                await conn.sendMessage(from, { text: 'Invalid option. Please select a valid number.' }, { quoted: mek });
-        }
-    }
-});
-
-
-
-
-
-// All Menu Command
-cmd({
-    pattern: "allmenu",
-    alias: ["list"],
-    react: "📜",
-    desc: "Get a comprehensive command list categorized",
-    category: "main",
-    filename: __filename
-}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
-    try {
-        const categories = ['download', 'main', 'group', 'owner', 'convert', 'search'];
-        let allMenu = '';
-
-        categories.forEach(category => {
-            let menu = '';
-            for (let i = 0; i < commands.length; i++) {
-                if (commands[i].category === category && !commands[i].dontAddCommandList) {
-                    menu += `*📍➣ Command :* ${commands[i].pattern}\n*📃➣ Desc :* ${commands[i].desc}\n*⌛➣ Use:* ${commands[i].use}\n\n`;
-                }
-            }
-
-            if (menu) {
-                allMenu += `💚 *${category.charAt(0).toUpperCase() + category.slice(1)} Menu:📥*\n\n${menu}────────────────────\n\n`;
-            }
-        });
-
-        if (!allMenu) {
-            allMenu = 'No commands available in any category.';
-        }
-
-        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: allMenu }, { quoted: mek });
-    } catch (e) {
-        console.error(e);
-        reply(`An error occurred: ${e.message}`);
-    }
-});
-
-// Download Menu Command
-cmd({
-    pattern: "downloadmenu",
-    react: "👾",
-    desc: "get cmd list",
-    category: "main",
-    filename: __filename
-}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
-    try {
         let menu = '';
         for (let i = 0; i < commands.length; i++) {
-            if (commands[i].category === 'download' && !commands[i].dontAddCommandList) {
+            if ((selectedOption === '1' && commands[i].category === 'download') ||
+                (selectedOption === '2' && commands[i].category === 'main') ||
+                (selectedOption === '3' && commands[i].category === 'group') ||
+                (selectedOption === '4' && commands[i].category === 'owner') ||
+                (selectedOption === '5' && commands[i].category === 'convert') ||
+                (selectedOption === '6' && commands[i].category === 'search')) {
                 menu += `*📍➣ Command :* ${commands[i].pattern}\n*📃➣ Desc :* ${commands[i].desc}\n*⌛➣ Use:* ${commands[i].use}\n\n`;
             }
         }
 
-        let madeMenu = `💚 *𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱 𝗠𝗲𝗻𝘂:📥*\n\n${menu}────────────────────`;
-
-        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
-    } catch (e) {
-        console.error(e);
-        reply(`An error occurred: ${e.message}`);
-    }
-});
-
-// Main Menu Command
-cmd({
-    pattern: "mainmenu",
-    react: "👾",
-    desc: "get cmd list",
-    category: "main",
-    filename: __filename
-}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
-    try {
-        let menu = '';
-        for (let i = 0; i < commands.length; i++) {
-            if (commands[i].category === 'main' && !commands[i].dontAddCommandList) {
-                menu += `*📍➣ Command :* ${commands[i].pattern}\n*📃➣ Desc :* ${commands[i].desc}\n*⌛➣ Use:* ${commands[i].use}\n\n`;
-            }
+        if (menu) {
+            let madeMenu = `💚 *𝗠𝗲𝗻𝘂:📥*\n\n${menu}────────────────────`;
+            await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
+        } else if (selectedOption === '7') {
+            await conn.sendMessage(from, { text: 'Exiting the menu. Feel free to ask anything!' }, { quoted: mek });
+        } else {
+            await conn.sendMessage(from, { text: 'Invalid option. Please select a valid number.' }, { quoted: mek });
         }
-
-        let madeMenu = `💚 *𝗠𝗮𝗶𝗻 𝗠𝗲𝗻𝘂:📥*\n\n${menu}────────────────────`;
-
-        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
-    } catch (e) {
-        console.error(e);
-        reply(`An error occurred: ${e.message}`);
-    }
-});
-
-// Group Menu Command
-cmd({
-    pattern: "groupmenu",
-    react: "👾",
-    desc: "get cmd list",
-    category: "main",
-    filename: __filename
-}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
-    try {
-        let menu = '';
-        for (let i = 0; i < commands.length; i++) {
-            if (commands[i].category === 'group' && !commands[i].dontAddCommandList) {
-                menu += `*📍➣ Command :* ${commands[i].pattern}\n*📃➣ Desc :* ${commands[i].desc}\n*⌛➣ Use:* ${commands[i].use}\n\n`;
-            }
-        }
-
-        let madeMenu = `💚 *𝗚𝗿𝗼𝘂𝗽 𝗠𝗲𝗻𝘂:📥*\n\n${menu}────────────────────`;
-
-        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
-    } catch (e) {
-        console.error(e);
-        reply(`An error occurred: ${e.message}`);
-    }
-});
-
-// Owner Menu Command
-cmd({
-    pattern: "ownermenu",
-    react: "👾",
-    desc: "get cmd list",
-    category: "main",
-    filename: __filename
-}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
-    try {
-        let menu = '';
-        for (let i = 0; i < commands.length; i++) {
-            if (commands[i].category === 'owner' && !commands[i].dontAddCommandList) {
-                menu += `*📍➣ Command :* ${commands[i].pattern}\n*📃➣ Desc :* ${commands[i].desc}\n*⌛➣ Use:* ${commands[i].use}\n\n`;
-            }
-        }
-
-        let madeMenu = `💚 *𝗢𝘄𝗻𝗲𝗿 𝗠𝗲𝗻𝘂:📥*\n\n${menu}────────────────────`;
-
-        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
-    } catch (e) {
-        console.error(e);
-        reply(`An error occurred: ${e.message}`);
-    }
-});
-
-// Convert Menu Command
-cmd({
-    pattern: "convertmenu",
-    react: "👾",
-    desc: "get cmd list",
-    category: "main",
-    filename: __filename
-}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
-    try {
-        let menu = '';
-        for (let i = 0; i < commands.length; i++) {
-            if (commands[i].category === 'convert' && !commands[i].dontAddCommandList) {
-                menu += `*📍➣ Command :* ${commands[i].pattern}\n*📃➣ Desc :* ${commands[i].desc}\n*⌛➣ Use:* ${commands[i].use}\n\n`;
-            }
-        }
-
-        let madeMenu = `💚 *𝗖𝗼𝗻𝘃𝗲𝗿𝘁 𝗠𝗲𝗻𝘂:📥*\n\n${menu}────────────────────`;
-
-        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
-    } catch (e) {
-        console.error(e);
-        reply(`An error occurred: ${e.message}`);
-    }
-});
-
-// Search Menu Command
-cmd({
-    pattern: "searchmenu",
-    react: "👾",
-    desc: "get cmd list",
-    category: "main",
-    filename: __filename
-}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
-    try {
-        let menu = '';
-        for (let i = 0; i < commands.length; i++) {
-            if (commands[i].category === 'search' && !commands[i].dontAddCommandList) {
-                menu += `*📍➣ Command :* ${commands[i].pattern}\n*📃➣ Desc :* ${commands[i].desc}\n*⌛➣ Use:* ${commands[i].use}\n\n`;
-            }
-        }
-
-        let madeMenu = `💚 *𝗦𝗲𝗮𝗿𝗰𝗵 𝗠𝗲𝗻𝘂:📥*\n\n${menu}────────────────────`;
-
-        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
-    } catch (e) {
-        console.error(e);
-        reply(`An error occurred: ${e.message}`);
     }
 });
 
