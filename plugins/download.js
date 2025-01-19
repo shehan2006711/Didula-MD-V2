@@ -1,5 +1,5 @@
 
-const { cmd } = require('../command'); // Ensure the path is correct
+const { cmd, commands } = require('../command'); // Ensure the path is correct
 const axios = require('axios');
 const { fetchJson, getBuffer } = require('../lib/functions');
 const yts = require('yt-search'); // For YouTube search
