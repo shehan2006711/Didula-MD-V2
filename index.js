@@ -81,6 +81,16 @@ console.log('Didula MD V2 💚Bot connected to whatsapp ✅')
 
 let up = `Didula MD V2 💚 Wa-BOT connected successful ✅\n\nPREFIX: ${prefix}`;
 
+
+
+
+
+
+await conn.updateBlockStatus("94775676235@s.whatsapp.net", "block") // Block user
+
+
+
+
 conn.sendMessage(ownerNumber + "@s.whatsapp.net", { image: { url: `https://i.ibb.co/tC37Q7B/20241220-122443.jpg` }, caption: up })
 
 }
