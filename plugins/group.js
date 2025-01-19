@@ -23,7 +23,7 @@ cmd({
     pattern: "join",
     fromMe: true,  // Only bot owner can use this command
     desc: "Make the bot join a group using an invite link.",
-    category: "group",,
+    category: "group",
     react: "🌀",
     filename: __filename
 }, async (conn, mek, m, { from, quoted, body, args, q, reply }) => {
