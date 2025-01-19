@@ -1,7 +1,7 @@
 
 // group.js - All Group Related Commands
 
-const { cmd } = require('../command');
+const { cmd, commands } = require('../command');
 const config = require('../config');
 const { fetchJson, getBuffer, getGroupAdmins } = require('../lib/functions');
 
