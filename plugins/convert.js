@@ -26,8 +26,8 @@ try{
       var nameJpg = getRandom('')
       isQuotedImage ? await m.quoted.download(nameJpg) : await m.download(nameJpg)
     let sticker = new Sticker(nameJpg + '.jpg', {
-    pack: 'Chuti Yakshani Md', // The pack name
-    author: 'Mr Dilla', // The author name
+    pack: 'Didula Md', // The pack name
+    author: 'Didula Rashmika', // The author name
       type: q.includes("--crop" || '-c') ? StickerTypes.CROPPED : StickerTypes.FULL,
       categories: ["🤩", "🎉"], // The sticker category
       id: "12345", // The sticker id
