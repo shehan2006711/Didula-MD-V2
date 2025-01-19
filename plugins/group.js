@@ -5,6 +5,97 @@ const { cmd, commands } = require('../command');
 const config = require('../config');
 const { fetchJson, getBuffer, getGroupAdmins } = require('../lib/functions');
 
+
+
+cmd({
+    pattern: "join",
+    fromMe: true,  // Only bot owner can use this command
+    desc: "Make the bot join a group using an invite link.",
+    category: "group",,
+    react: "🌀",
+    filename: __filename
+}, async (conn, mek, m, { from, quoted, body, args, q, reply }) => {
+    try {
+        // Check if invite link is provided
+        if (!q || !q.includes("chat.whatsapp.com")) {
+            return await reply("Please provide a valid WhatsApp group invite link.");
+        }
+        // Extract the group code from the invite link
+        const inviteCode = q.split("chat.whatsapp.com/")[1];
+        // Make the bot join the group using the invite code
+        const response = await conn.groupAcceptInvite(inviteCode);
+        // Send confirmation message if successfully joined
+        if (response) {
+            await reply("✅ Successfully joined the group!");
+        } else {
+            await reply("❌ Failed to join the group. Please check the invite link.");
+        }
+    } catch (e) {
+        console.error("Error while joining group:", e);
+        await reply("❗ An error occurred while trying to join the group.");
+    }
+});
+//============================================================================================================================
+// Leave Command
+cmd({
+    pattern: "left",
+    fromMe: true,  // Only bot owner can use this command
+    desc: "Make the bot leave the group.",
+    category: "group",
+    react: "👋",
+    filename: __filename
+}, async (conn, mek, m, { from, isGroup, reply }) => {
+    try {
+        // Check if the command is used in a group
+        if (!isGroup) {
+            return await reply("❌ This command can only be used in a group.");
+        }
+        // Make the bot leave the group
+        await conn.groupLeave(from);
+        // Send confirmation message after leaving the group
+        console.log(`Bot left the group: ${from}`);
+    } catch (e) {
+        console.error("Error while leaving group:", e);
+        await reply("❗ An error occurred while trying to leave the group.");
+    }
+});
+//============================================================================================================================
+// Hidetag Command
+cmd({
+    pattern: "hidetag",
+    fromMe: true,  // Only bot owner can use this command
+    desc: "Send a message with hidden tags to all group members.",
+    category: "group",
+    react: "🔍",
+    filename: __filename
+}, async (conn, mek, m, { from, isGroup, args, q, participants, reply }) => {
+    try {
+        // Check if the command is used in a group
+        if (!isGroup) {
+            return await reply("❌ This command can only be used in a group.");
+        }
+        // Check if a message is provided
+        if (!q) {
+            return await reply("❗ Please provide a message to send.");
+        }
+        // Extract group participants' contact IDs
+        const participantIds = participants.map((participant) => participant.id);
+        // Send the message with hidden tags
+        await conn.sendMessage(from, { 
+            text: q, 
+            mentions: participantIds 
+        });
+        console.log("Hidetag message sent to all group members.");
+    } catch (e) {
+        console.error("Error while sending hidetag message:", e);
+        await reply("❗ An error occurred while trying to send the hidetag message.");
+    }
+});
+
+
+
+
+
 // Mute Group Command
 cmd({
     pattern: "mute",
