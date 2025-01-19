@@ -160,39 +160,7 @@ async (conn, mek, m, { from, isOwner, reply }) => {
 });
 
 // Kick All Command (Owner verification)
-cmd({
-    pattern: "kickall",
-    desc: "Kicks all non-admin members from the group.",
-    react: "👏",
-    category: "owner",
-    filename: __filename,
-},           
-async(conn, mek, m,{from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply}) => {
-try{
-    if (!isAdmins) return reply(`ɪ ɴᴇᴇᴅ ᴀᴅᴍɪɴ 💀`)
-    if (!isOwner) return reply(`ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴏᴡɴᴇʀ ᴏꜰ ᴅɪᴅᴜʟᴀ ᴍᴅ`)
 
-    if (!isGroup) return reply(`This command is only for groups.`);
-    if (!isBotAdmins) return reply(`I need admin privileges to kick users.`);
-    
-    const allParticipants = groupMetadata.participants;
-    const nonAdminParticipants = allParticipants.filter(member => !groupAdmins.includes(member.id));
-    
-    if (nonAdminParticipants.length === 0) {
-        return reply('There are no non-admin members to kick.');
-    }
-    
-    for (let participant of nonAdminParticipants) {
-        await conn.groupParticipantsUpdate(m.chat, [participant.id], "remove");
-    }
-    
-    reply(`Didula MD V2 💚 Successfully kicked all non-admin members from the group.`);
-
-} catch (e) {
-    console.error('Error kicking users:', e);
-    reply('An error occurred while trying to kick all members. Please try again.');
-}
-});
 
 module.exports = {
     // Export any necessary functions or variables
