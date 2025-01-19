@@ -6,7 +6,7 @@ const config = require('../config');
 const axios = require('axios');
 const g_i_s = require('g-i-s');
 const cheerio = require('cheerio');
-
+const yts = require('yt-search'); // Make sure to import the yts library
 
 
 cmd({
