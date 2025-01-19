@@ -263,7 +263,7 @@ cmd({
 }, async (conn, mek, m, { from, quoted, reply }) => {
     try {
         // Send a message indicating the bot is alive
-        const message = await conn.sendMessage(from, { text: '`𝗗𝗶𝗱𝘂𝗹𝗮 𝗠𝗗 𝗶𝘀 𝗔𝗹𝗶𝘃𝗲 𝗡𝗼𝘄💚`' });
+        const message = await conn.sendMessage(from, { text: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*' });
 
         // Simulate some processing time
         const startTime = Date.now();
@@ -274,7 +274,7 @@ cmd({
         // Send the alive response with additional information
         await conn.sendMessage(from, {
             document: { url: config.PDF_URL },
-            fileName: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*',
+            fileName: '◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆',
             mimetype: "application/pdf",
             fileLength: 99999999999999,
             image: { url: config.ALIVE_IMG },
@@ -284,7 +284,7 @@ cmd({
                 forwardingScore: 999,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterName: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*',
+                    newsletterName: '◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆',
                     newsletterJid: "120363343196447945@newsletter",
                 },
                 externalAdReply: {
