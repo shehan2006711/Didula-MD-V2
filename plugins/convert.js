@@ -1,7 +1,7 @@
 
 // convert.js - All Convert Category Commands
 
-const { cmd } = require('../command');
+const { cmd, commands } = require('../command');
 const config = require('../config');
 const axios = require('axios');
 const { fetchJson, getBuffer } = require('../lib/functions');
