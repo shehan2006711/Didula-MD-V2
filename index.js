@@ -235,7 +235,7 @@ command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, i
 
 
 
- if (!_0x535a9e) {
+ 
           if (!_0x8fbd9a.id.startsWith("BAE5")) {
             if (!fs.existsSync("message_data")) {
               fs.mkdirSync("message_data");
