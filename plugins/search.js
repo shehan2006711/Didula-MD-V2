@@ -1,7 +1,7 @@
 
 // search.js - All Search Category Commands
 
-const { cmd } = require('../command');
+const { cmd, commands } = require('../command');
 const config = require('../config');
 const axios = require('axios');
 const g_i_s = require('g-i-s');
