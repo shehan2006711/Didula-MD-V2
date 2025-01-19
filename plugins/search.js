@@ -63,19 +63,6 @@ async(conn, mek, m, { from, reply, q }) => {
 
 
 // Group JIDs Search
-cmd({
-    pattern: "gjid",
-    desc: "Get the list of JIDs for all groups the bot is part of.",
-    category: "search",
-    react: "📝",
-    filename: __filename
-},
-async (conn, mek, m, { from, isOwner, reply }) => {
-    if (!isOwner) return reply("❌ You are not the owner!");
-    const groups = await conn.groupFetchAllParticipating();
-    const groupJids = Object.keys(groups).join('\n');
-    reply(`📝 *Group JIDs:*\n\n${groupJids}`);
-});
 
 // Get Profile Picture Command
 cmd({
@@ -100,24 +87,6 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
     }
 });
 
-// JID Information Command
-cmd({
-    pattern: "jid",
-    react: "💻",
-    alias: ["jids"],
-    desc: "Check bot's ping",
-    category: "search",
-    use: '.ping',
-    filename: __filename
-},
-async(conn, mek, m, {from, mnu, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply}) => {
-    try {
-        reply(from)
-    } catch (e) {
-        reply(`${e}`)
-        console.log(e)
-    }
-});
 
 // View Once Message Search
 cmd({
