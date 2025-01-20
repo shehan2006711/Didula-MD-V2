@@ -1,3 +1,4 @@
+
 const { cmd } = require('../command');
 const axios = require('axios');
 
@@ -13,7 +14,7 @@ cmd({
     if (!q) return reply('Please provide a movie title!');
 
     try {
-        const response = await axios.get(`https://apicine-api.vercel.app/api/cinesubz/search?q=${encodeURIComponent(q)}&apikey=test1`);
+        const response = await axios.get(`https://vajira-movie-api.vercel.app/api/cinesubz/search?q=${encodeURIComponent(q)}&apikey=vajiratech`);
         const movies = response.data.data.data;
 
         if (movies.length === 0) return reply('No movies found!');
@@ -36,18 +37,13 @@ cmd({
                 if (selectedOption >= 0 && selectedOption < movies.length) {
                     const movieLink = movies[selectedOption].link;
 
-                    // Fetch movie details and download links
-                    const movieDetailsResponse = await axios.get(`https://apicine-api.vercel.app/api/cinesubz/movie?url=${encodeURIComponent(movieLink)}&apikey=test1`);
-                    const movieDetails = movieDetailsResponse.data.data.moviedata;
-                    const downloadLinks = movieDetailsResponse.data.data.dllinks.directDownloadLinks;
+                    // Fetch movie download links
+                    const downloadResponse = await axios.get(`https://vajira-movie-api.vercel.app/api/cinesubz/download?url=${encodeURIComponent(movieLink)}&apikey=vajiratech`);
+                    const downloadLinks = downloadResponse.data.data;
 
-                    let downloadMessage = `🎬 *${movieDetails.title}*\n\n`;
-                    downloadMessage += `${movieDetails.description}\n\n`;
-                    downloadMessage += `*Director:* ${movieDetails.director}\n`;
-                    downloadMessage += `*Cast:* ${movieDetails.cast.map(actor => `${actor.name} as ${actor.character}`).join(', ')}\n\n`;
-                    downloadMessage += `*Download Links:*\n`;
+                    let downloadMessage = `🎬 *${movies[selectedOption].title}* - Download Links\n\n`;
                     downloadLinks.forEach(link => {
-                        downloadMessage += `- ${link.quality} (${link.size}): [Download](${link.link})\n`;
+                        downloadMessage += `- ${link.fileName} (${link.fileSize}): [Download](${link.href})\n`;
                     });
 
                     await conn.sendMessage(from, { text: downloadMessage }, { quoted: mek });
