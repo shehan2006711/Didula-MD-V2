@@ -18,7 +18,7 @@ async(conn, mek, m, { from, q, reply }) => {
     if (!q) return reply('*Please provide a movie URL!*');
 
     const download_info = await fetchJson(`${apilink}/download?url=${encodeURIComponent(q)}&apikey=vajiratech`);
-    
+
     const { data } = download_info;
     if (!data || data.length === 0) return reply('No download links available!');
 
@@ -48,18 +48,18 @@ async(conn, mek, m, { from, q, reply }) => {
     if (!q) return reply("Please provide a movie name!");
 
     const search_results = await fetchJson(`${apilink}/search?q=${encodeURIComponent(q)}&apikey=vajiratech`);
-    
+
     const { data } = search_results;
     if (!data || data.length === 0) return reply("No results found!");
 
     let msg = `🎬 *MOVIE SEARCH RESULTS* 🎬\n`;
-    data.forEach(movie => {
+    data.data.forEach(movie => {
       msg += `*Title:* ${movie.title}\n`;
       msg += `*Year:* ${movie.year}\n`;
       msg += `*Rating:* ${movie.rating}\n`;
       msg += `*Description:* ${movie.description}\n`;
       msg += `*Link:* [Watch Here](${movie.link})\n`;
-      msg += `*Image:* ${movie.imageSrc}\n\n`;
+      msg += `*Image:* [View Image](${movie.imageSrc})\n\n`;
     });
 
     await conn.sendMessage(from, { text: msg, quoted: mek });
