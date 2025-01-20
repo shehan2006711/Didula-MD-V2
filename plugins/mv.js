@@ -17,7 +17,7 @@ cmd({
         const response = await axios.get(`https://vajira-movie-api.vercel.app/api/cinesubz/search?q=${encodeURIComponent(q)}&apikey=vajiratech`);
         const movies = response.data.data.data;
 
-        if (movies.length === 0) return reply('No movies found!');
+        if (!movies || movies.length === 0) return reply('No movies found!');
 
         let message = `🎥 *Movie Search Results* 🎥\n`;
         movies.forEach((movie, index) => {
@@ -38,15 +38,21 @@ cmd({
                     const movieLink = movies[selectedOption].link;
 
                     // Fetch movie download links
-                    const downloadResponse = await axios.get(`https://vajira-movie-api.vercel.app/api/cinesubz/download?url=${encodeURIComponent(movieLink)}&apikey=vajiratech`);
-                    const downloadLinks = downloadResponse.data.data;
+                    try {
+                        const downloadResponse = await axios.get(`https://vajira-movie-api.vercel.app/api/cinesubz/download?url=${encodeURIComponent(movieLink)}&apikey=vajiratech`);
+                        const downloadLinks = downloadResponse.data.data;
 
-                    let downloadMessage = `🎬 *${movies[selectedOption].title}* - Download Links\n\n`;
-                    downloadLinks.forEach(link => {
-                        downloadMessage += `- ${link.fileName} (${link.fileSize}): [Download](${link.href})\n`;
-                    });
+                        let downloadMessage = `🎬 *${movies[selectedOption].title}* - Download Links\n\n`;
+                        downloadLinks.forEach(link => {
+                            downloadMessage += `- ${link.fileName} (${link.fileSize}): [Download](${link.href})\n`;
+                        });
 
-                    await conn.sendMessage(from, { text: downloadMessage }, { quoted: mek });
+                        await conn.sendMessage(from, { text: downloadMessage }, { quoted: mek });
+                    } catch (downloadError) {
+                        console.error(downloadError);
+                        reply('An error occurred while fetching download links. Please try again later.');
+                    }
+
                 } else {
                     reply('Invalid option. Please select a valid movie number.🔴');
                 }
