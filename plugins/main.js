@@ -9,6 +9,36 @@ const fs = require('fs');
 const path = require('path')
 
 cmd({
+    pattern: "allmenu",
+    alias: ["list"],
+    react: "📜",
+    desc: "Get all commands list.",
+    category: "main",
+    filename: __filename
+}, async (conn, mek, m, { from, quoted, reply }) => {
+    try {
+        let menu = '';
+        for (let i = 0; i < commands.length; i++) {
+            if (!commands[i].dontAddCommandList) {
+                menu += `*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*\n*╭┈───────────────•*\n*├ Command :* ${commands[i].pattern}\n*├ Desc :* ${commands[i].desc}\n*├ Use:* ${commands[i].use}\n*╰┈───────────────•*\n\n`;
+            }
+        }
+
+        let madeMenu = menu;
+        if (madeMenu === '') {
+            madeMenu = 'No commands available at the moment.';
+        }
+
+        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
+    } catch (e) {
+        console.error(e);
+        reply(`An error occurred: ${e.message}`);
+    }
+});
+
+
+
+cmd({
     pattern: "broadcast",
     fromMe: true,
     desc: "📢 Broadcast a message to all chats",
