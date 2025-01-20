@@ -1,69 +1,70 @@
 
-const { cmd } = require('../command');
-const axios = require('axios');
+const { cmd } = require('../command'); // Make sure the path is correct
+const { fetchJson } = require('../lib/functions'); // Make sure the path is correct
 
-// Command to search for movies
+const apilink = 'https://vajira-movie-api.vercel.app/api/cinesubz'; // API LINK
+
 cmd({
-    pattern: "movie",
-    desc: "Search for movies",
-    use: ".movie <movie_name>",
-    react: "🎬",
-    category: "download",
-    filename: __filename
-}, async (conn, mek, m, { from, q, reply }) => {
-    if (!q) return reply('Please provide a movie title!');
+  pattern: "moviedl",
+  alias: ["dlmovie"],
+  react: '🎬',
+  desc: "Download movies",
+  category: "download",
+  use: '.moviedownload <movie link>',
+  filename: __filename
+},
+async(conn, mek, m, { from, q, reply }) => {
+  try {
+    if (!q) return reply('*Please provide a movie URL!*');
 
-    try {
-        const response = await axios.get(`https://vajira-movie-api.vercel.app/api/cinesubz/search?q=${encodeURIComponent(q)}&apikey=vajiratech`);
-        const movies = response.data.data.data;
+    const download_info = await fetchJson(`${apilink}/download?url=${encodeURIComponent(q)}&apikey=vajiratech`);
+    
+    const { data } = download_info;
+    if (!data || data.length === 0) return reply('No download links available!');
 
-        if (!movies || movies.length === 0) return reply('No movies found!');
+    let msg = `🎥 *MOVIE DOWNLOAD LINKS* 🎥\n`;
+    data.forEach(link => {
+      msg += `• *${link.type}* - [${link.fileName}](${link.href}) - Size: ${link.fileSize}\n`;
+    });
 
-        let message = `🎥 *Movie Search Results* 🎥\n`;
-        movies.forEach((movie, index) => {
-            message += `\n${index + 1}. *${movie.title}*\n   Year: ${movie.year}\n   Rating: ${movie.rating}\n   [More Info](${movie.link})\n`;
-        });
-        message += `\n\nReply with the movie number to download.`;
+    await conn.sendMessage(from, { text: msg, quoted: mek });
+  } catch (e) {
+    reply('*Error occurred while fetching download links!*');
+    console.error(e);
+  }
+});
 
-        const sentMsg = await conn.sendMessage(from, { text: message }, { quoted: mek });
+cmd({
+  pattern: "movie",
+  alias: ["searchmovie"],
+  react: "🔍",
+  desc: "Search for movies",
+  category: "search",
+  use: '.moviesearch <movie name>',
+  filename: __filename
+},
+async(conn, mek, m, { from, q, reply }) => {
+  try {
+    if (!q) return reply("Please provide a movie name!");
 
-        const searchResponseHandler = async (msgUpdate) => {
-            const msg = msgUpdate.messages[0];
-            if (!msg.message || !msg.message.extendedTextMessage) return;
+    const search_results = await fetchJson(`${apilink}/search?q=${encodeURIComponent(q)}&apikey=vajiratech`);
+    
+    const { data } = search_results;
+    if (!data || data.length === 0) return reply("No results found!");
 
-            const selectedOption = parseInt(msg.message.extendedTextMessage.text.trim(), 10) - 1;
+    let msg = `🎬 *MOVIE SEARCH RESULTS* 🎬\n`;
+    data.forEach(movie => {
+      msg += `*Title:* ${movie.title}\n`;
+      msg += `*Year:* ${movie.year}\n`;
+      msg += `*Rating:* ${movie.rating}\n`;
+      msg += `*Description:* ${movie.description}\n`;
+      msg += `*Link:* [Watch Here](${movie.link})\n`;
+      msg += `*Image:* ${movie.imageSrc}\n\n`;
+    });
 
-            if (msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.stanzaId === sentMsg.key.id) {
-                if (selectedOption >= 0 && selectedOption < movies.length) {
-                    const movieLink = movies[selectedOption].link;
-
-                    // Fetch movie download links
-                    try {
-                        const downloadResponse = await axios.get(`https://vajira-movie-api.vercel.app/api/cinesubz/download?url=${encodeURIComponent(movieLink)}&apikey=vajiratech`);
-                        const downloadLinks = downloadResponse.data.data;
-
-                        let downloadMessage = `🎬 *${movies[selectedOption].title}* - Download Links\n\n`;
-                        downloadLinks.forEach(link => {
-                            downloadMessage += `- ${link.fileName} (${link.fileSize}): [Download](${link.href})\n`;
-                        });
-
-                        await conn.sendMessage(from, { text: downloadMessage }, { quoted: mek });
-                    } catch (downloadError) {
-                        console.error(downloadError);
-                        reply('An error occurred while fetching download links. Please try again later.');
-                    }
-
-                } else {
-                    reply('Invalid option. Please select a valid movie number.🔴');
-                }
-                conn.ev.off('messages.upsert', searchResponseHandler);
-            }
-        };
-
-        conn.ev.on('messages.upsert', searchResponseHandler);
-
-    } catch (error) {
-        console.error(error);
-        reply('An error occurred while searching for movies. Please try again later.');
-    }
+    await conn.sendMessage(from, { text: msg, quoted: mek });
+  } catch (error) {
+    console.error(error);
+    reply('An error occurred while processing your request. Please try again later.');
+  }
 });
