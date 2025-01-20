@@ -16,81 +16,43 @@ const cheerio = require('cheerio'); // Import cheerio for HTML parsing
 
 cmd({
     pattern: "movie",
-    desc: "Search and download movies from CineSubz",
-    category: "download",
-    use: ".cinesub <movie_name>",
+    alias: ["smovie"],
+    react: "🎬",
+    desc: "Search for movies",
+    category: "movie",
+    use: '.searchmovie < Movie Name >',
     filename: __filename
-}, async (conn, mek, m, { from, q, reply }) => {
-    if (!q) return reply("❗ Please provide a movie name.");
-
+},
+async(conn, mek, m, { from, prefix, q }) => {
     try {
-        // Search for movies using the API
-        const searchUrl = `https://apicine-api.vercel.app/api/cinesubz/search?q=${encodeURIComponent(q)}&apikey=test1`;
-        const response = await axios.get(searchUrl);
+        if (!q) return await reply("Please provide a movie name to search.");
+
+        // Define the API link and API key directly in the request
+        const apilink = "https://apicine-api.vercel.app/api/cinesubz/search";
+        const apikey = "test1";
+
+        // Fetch data from the API
+        const response = await axios.get(`${apilink}?q=${encodeURIComponent(q)}&apikey=${apikey}`);
         const movies = response.data.data.data;
 
-        if (!Array.isArray(movies) || movies.length === 0) {
-            return reply("❌ No movies found.");
-        }
+        if (movies.length < 1) return await reply("No movies found for your search.");
 
-        // Create a response message with the movie options
-        let message = "🎬 *CineSubz Movie Search Results:* 🎬\n\n";
+        let message = "🎥 *Movie Search Results* 🎥\n\n";
+        
         movies.forEach((movie, index) => {
-            message += `*${index + 1}.* ${movie.title}\n`;
+            message += `*${index + 1}.* [${movie.title}](${movie.link})\n`;
+            message += `🌟 Rating: ${movie.rating}\n`;
             message += `📅 Year: ${movie.year}\n`;
-            message += `⭐ Rating: ${movie.rating}\n`;
             message += `📝 Description: ${movie.description}\n`;
-            message += `🔗 More Info: ${movie.link}\n\n`;
+            message += `![Image](${movie.imageSrc})\n\n`;
         });
 
-        message += "🔗 *Select a movie number to download:*";
-
-        // Send the search results
-        const msg = await conn.sendMessage(from, { text: message }, { quoted: mek });
-
-        // Listen for user response to select a movie
-        conn.ev.on('messages.upsert', async (msgUpdate) => {
-            const msg = msgUpdate.messages[0];
-            if (!msg.message || !msg.message.extendedTextMessage) return;
-
-            const selectedOption = msg.message.extendedTextMessage.text.trim();
-            const movieIndex = parseInt(selectedOption) - 1;
-
-            if (movieIndex >= 0 && movieIndex < movies.length) {
-                const movie = movies[movieIndex];
-                const downloadLinksUrl = `https://apicine-api.vercel.app/api/cinesubz/download?url=${encodeURIComponent(movie.link)}&apikey=test1`;
-                const downloadLinksResponse = await axios.get(downloadLinksUrl);
-                const downloadData = downloadLinksResponse.data.data;
-
-                if (!Array.isArray(downloadData) || downloadData.length === 0) {
-                    return reply("❌ No download links available for this movie.");
-                }
-
-                // Provide download links and send the file
-                let downloadMessage = `🎉 *Download Links for ${movie.title}:* 🎉\n\n`;
-
-                for (const link of downloadData) {
-                    downloadMessage += `📥 *${link.fileName}* (${link.fileSize})\n`;
-                    downloadMessage += `${link.href}\n\n`;
-
-                    // Optional: Send the first download link file directly
-                    const buff = await getBuffer(link.href);
-                    await conn.sendMessage(from, { document: buff, caption: `Here is your movie: ${link.fileName}`, mimetype: "video/mp4", fileName: link.fileName }, { quoted: mek });
-                    break; // Exit after sending the first download link
-                }
-
-                await conn.sendMessage(from, { text: downloadMessage }, { quoted: mek });
-            } else {
-                reply("❌ Invalid selection. Please choose a valid movie number.");
-            }
-        });
-
-    } catch (e) {
-        console.error(e);
-        reply(`❌ Error: ${e.message}`);
+        await conn.sendMessage(from, { text: message, footer: "Powered by APICINE" }, { quoted: mek });
+    } catch (error) {
+        console.error(error);
+        await conn.sendMessage(from, { text: "An error occurred while searching for movies." }, { quoted: mek });
     }
 });
-
 
 
 
