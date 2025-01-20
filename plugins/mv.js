@@ -1,102 +1,71 @@
-
+const axios = require('axios');
 const { cmd } = require('../command');
-const config = require('../config');
-const { fetchJson, sleep } = require('../lib/functions');
-const prabathApi = "test1"; // Update your API key
-const api = "https://apicine-api.vercel.app/api/cinesubz/"; // Base API link
 
-cmd({
-    pattern: "nbt",
-    alias: ["mv", "moviedl", "mvdl", "cinesub", "cinesubz"],
-    desc: "movie",
-    category: "download",
-    react: "🎬",
-    filename: __filename
-}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q }) => {
+// Helper function to fetch data from the API
+async function fetchApi(url) {
     try {
-        if (!q) {
-            return await reply("Please provide the name of the movie.");
-        }
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error('API Fetch Error:', error);
+        throw new Error('Failed to fetch data from API.');
+    }
+}
 
-        // Fetch movie search results
-        const data = await fetchJson(`${api}search?q=${q}&apikey=${prabathApi}`);
-        const allMovies = data.data.data;
+// Command to search for movies
+cmd({
+    pattern: "movie",
+    desc: "Search for movies",
+    use: '.searchmovie < Movie Name >',
+    filename: __filename
+},
+async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, reply }) => {
+    try {
+        if (!q) return await reply("Please provide a movie name.");
 
-        if (!allMovies.length) {
-            return await reply("No movies found.");
-        }
+        const response = await fetchApi(`https://apicine-api.vercel.app/api/cinesubz/search?q=${encodeURIComponent(q)}&apikey=test1`);
+        const movies = response.data.data;
 
-        const movieList = allMovies.map((app, index) => {
-            return `${index + 1}. 🎬 ${app.title}`;
-        }).join("\n");
+        if (movies.length === 0) return await reply("No movies found.");
 
-        const message = '*Cinesubz Movie SEARCH*\n____________________________\n\n*Movies Found:*\n\n' + movieList;
-        const sentMsg = await conn.sendMessage(from, { text: message }, { quoted: mek });
-
-        // Listen for the user's response
-        conn.ev.on('messages.upsert', async (messageUpdate) => {
-            const mek = messageUpdate.messages[0];
-            if (!mek.message) return;
-
-            const messageType = mek.message.conversation || mek.message.extendedTextMessage?.text;
-            const userResponse = parseInt(messageType); // Convert user response to number
-            const selectedMovie = allMovies[userResponse - 1];
-
-            // If the response is valid
-            if (selectedMovie) {
-                const movieDetails = await fetchJson(`${api}download?url=${selectedMovie.link}&apikey=${prabathApi}`);
-                const desc = movieDetails.data;
-
-                let movieTitle = selectedMovie.title;
-                let releaseDate = selectedMovie.year;
-                let imdbRating = selectedMovie.rating;
-                let description = selectedMovie.description;
-                let url = selectedMovie.link;
-                let imageSrc = selectedMovie.imageSrc; // Assuming this is the correct image source
-
-                let detailMessage = `
-- Movie: ${movieTitle}
-- Release Date: ${releaseDate}
-- IMDB Rating: ${imdbRating}
-- Description: ${description}
-- Url: ${url}
-- Image: ${imageSrc}
-`;
-
-                const detailsMsg = await conn.sendMessage(from, { text: detailMessage }, { quoted: mek });
-
-                // Available qualities (assumed to be in the download response)
-                let qualities = movieDetails.data.map((download, index) => `> ${index + 1}. ${download.fileName} (${download.fileSize})`).join("\n");
-
-                let qualityMessage = `*Available Qualities:*\n\n${qualities}`;
-                await conn.sendMessage(from, { text: qualityMessage }, { quoted: mek });
-
-                // Listen for quality selection
-                conn.ev.on('messages.upsert', async (qualityUpdate) => {
-                    const qualityMek = qualityUpdate.messages[0];
-                    if (!qualityMek.message) return;
-
-                    const qualityType = parseInt(qualityMek.message.conversation || qualityMek.message.extendedTextMessage?.text);
-                    const selectedQuality = movieDetails.data[qualityType - 1];
-
-                    if (selectedQuality) {
-                        const downloadLink = selectedQuality.href; // Direct download link
-                        await conn.sendMessage(from, { document: { url: downloadLink }, mimetype: 'video/mp4', fileName: selectedQuality.fileName, caption: "> Cinesubz Movie Download" });
-                    } else {
-                        await reply("Invalid quality selection.");
-                    }
-                });
-            } else {
-                await reply("Invalid movie selection.");
-            }
+        let message = `🎬 *Movie Search Results for:* ${q}\n\n`;
+        movies.forEach((movie, index) => {
+            message += `${index + 1}. ${movie.title}\n   Rating: ${movie.rating}\n   Year: ${movie.year}\n   [Details](${movie.link})\n\n`;
         });
+
+        await conn.sendMessage(from, { text: message }, { quoted: mek });
     } catch (e) {
-        console.log(e);
+        console.error(e);
+        await reply("An error occurred while searching for movies.");
     }
 });
 
-// Utility function to parse size
-function parseSize(sizeStr) {
-    let sizeMatch = sizeStr.match(/^([\d.]+)\s*GB$/);
-    return sizeMatch ? parseFloat(sizeMatch[1]) : 0;
-}
+// Command to download a movie
+cmd({
+    pattern: "dlmovie",
+    desc: "Download movie",
+    use: '.downloadmovie < Movie URL >',
+    filename: __filename
+},
+async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, reply }) => {
+    try {
+        if (!q.includes('cinesubz.co/movies')) return await reply("Invalid movie URL.");
+
+        const response = await fetchApi(`https://apicine-api.vercel.app/api/cinesubz/download?url=${encodeURIComponent(q)}&apikey=test1`);
+        const downloadOptions = response.data.data;
+
+        if (!downloadOptions || downloadOptions.length === 0) {
+            return await reply("No download options available.");
+        }
+
+        let message = `🎬 *Download Options for Movie:*\n\n`;
+        downloadOptions.forEach((option, index) => {
+            message += `${index + 1}. ${option.fileName}\n   Type: ${option.type}\n   Size: ${option.fileSize}\n   [Download](${option.href})\n\n`;
+        });
+
+        await conn.sendMessage(from, { text: message }, { quoted: mek });
+    } catch (e) {
+        console.error(e);
+        await reply("An error occurred while fetching download options.");
+    }
+});
