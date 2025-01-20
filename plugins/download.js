@@ -13,6 +13,7 @@ const cheerio = require('cheerio'); // Import cheerio for HTML parsing
 
 
 
+
 cmd({
     pattern: "movie",
     desc: "Search and download movies from CineSubz",
@@ -26,9 +27,11 @@ cmd({
         // Search for movies using the API
         const searchUrl = `https://apicine-api.vercel.app/api/cinesubz/search?q=${encodeURIComponent(q)}&apikey=test1`;
         const response = await axios.get(searchUrl);
+        console.log(response.data); // Log the API response to check its structure
+
         const movies = response.data.data.data;
 
-        if (movies.length === 0) {
+        if (!Array.isArray(movies) || movies.length === 0) {
             return reply("❌ No movies found.");
         }
 
@@ -57,11 +60,12 @@ cmd({
 
             if (movieIndex >= 0 && movieIndex < movies.length) {
                 const movie = movies[movieIndex];
-                const downloadLinks = await axios.get(`https://apicine-api.vercel.app/api/cinesubz/download?url=${encodeURIComponent(movie.link)}&apikey=test1`);
+                const downloadLinksUrl = `https://apicine-api.vercel.app/api/cinesubz/download?url=${encodeURIComponent(movie.link)}&apikey=test1`;
+                const downloadLinks = await axios.get(downloadLinksUrl);
 
                 const downloadData = downloadLinks.data.data;
 
-                if (downloadData.length === 0) {
+                if (!Array.isArray(downloadData) || downloadData.length === 0) {
                     return reply("❌ No download links available for this movie.");
                 }
 
@@ -89,9 +93,6 @@ cmd({
         reply(`❌ Error: ${e.message}`);
     }
 });
-
-
-
 
 
 
