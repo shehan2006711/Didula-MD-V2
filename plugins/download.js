@@ -27,8 +27,6 @@ cmd({
         // Search for movies using the API
         const searchUrl = `https://apicine-api.vercel.app/api/cinesubz/search?q=${encodeURIComponent(q)}&apikey=test1`;
         const response = await axios.get(searchUrl);
-        console.log(response.data); // Log the API response to check its structure
-
         const movies = response.data.data.data;
 
         if (!Array.isArray(movies) || movies.length === 0) {
@@ -61,9 +59,8 @@ cmd({
             if (movieIndex >= 0 && movieIndex < movies.length) {
                 const movie = movies[movieIndex];
                 const downloadLinksUrl = `https://apicine-api.vercel.app/api/cinesubz/download?url=${encodeURIComponent(movie.link)}&apikey=test1`;
-                const downloadLinks = await axios.get(downloadLinksUrl);
-
-                const downloadData = downloadLinks.data.data;
+                const downloadLinksResponse = await axios.get(downloadLinksUrl);
+                const downloadData = downloadLinksResponse.data.data;
 
                 if (!Array.isArray(downloadData) || downloadData.length === 0) {
                     return reply("❌ No download links available for this movie.");
@@ -77,7 +74,7 @@ cmd({
                     downloadMessage += `${link.href}\n\n`;
 
                     // Optional: Send the first download link file directly
-                    const buff = await getBuffer(link.href); // Fetch the buffer data for the file
+                    const buff = await getBuffer(link.href);
                     await conn.sendMessage(from, { document: buff, caption: `Here is your movie: ${link.fileName}`, mimetype: "video/mp4", fileName: link.fileName }, { quoted: mek });
                     break; // Exit after sending the first download link
                 }
@@ -93,6 +90,7 @@ cmd({
         reply(`❌ Error: ${e.message}`);
     }
 });
+
 
 
 
