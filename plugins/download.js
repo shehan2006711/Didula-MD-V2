@@ -14,45 +14,6 @@ const cheerio = require('cheerio'); // Import cheerio for HTML parsing
 
 
 
-cmd({
-    pattern: "movie",
-    alias: ["smovie"],
-    react: "🎬",
-    desc: "Search for movies",
-    category: "movie",
-    use: '.searchmovie < Movie Name >',
-    filename: __filename
-},
-async(conn, mek, m, { from, prefix, q }) => {
-    try {
-        if (!q) return await reply("Please provide a movie name to search.");
-
-        // Define the API link and API key directly in the request
-        const apilink = "https://apicine-api.vercel.app/api/cinesubz/search";
-        const apikey = "test1";
-
-        // Fetch data from the API
-        const response = await axios.get(`${apilink}?q=${encodeURIComponent(q)}&apikey=${apikey}`);
-        const movies = response.data.data.data;
-
-        if (movies.length < 1) return await reply("No movies found for your search.");
-
-        let message = "🎥 *Movie Search Results* 🎥\n\n";
-        
-        movies.forEach((movie, index) => {
-            message += `*${index + 1}.* [${movie.title}](${movie.link})\n`;
-            message += `🌟 Rating: ${movie.rating}\n`;
-            message += `📅 Year: ${movie.year}\n`;
-            message += `📝 Description: ${movie.description}\n`;
-            message += `![Image](${movie.imageSrc})\n\n`;
-        });
-
-        await conn.sendMessage(from, { text: message, footer: "Powered by APICINE" }, { quoted: mek });
-    } catch (error) {
-        console.error(error);
-        await conn.sendMessage(from, { text: "An error occurred while searching for movies." }, { quoted: mek });
-    }
-});
 
 
 
