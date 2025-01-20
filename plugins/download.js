@@ -10,6 +10,92 @@ const yts = require('yt-search'); // For YouTube search
 const cheerio = require('cheerio'); // Import cheerio for HTML parsing
 
 
+
+
+
+cmd({
+    pattern: "movie",
+    desc: "Search and download movies from CineSubz",
+    category: "download",
+    use: ".cinesub <movie_name>",
+    filename: __filename
+}, async (conn, mek, m, { from, q, reply }) => {
+    if (!q) return reply("❗ Please provide a movie name.");
+
+    try {
+        // Search for movies using the API
+        const searchUrl = `https://apicine-api.vercel.app/api/cinesubz/search?q=${encodeURIComponent(q)}&apikey=test1`;
+        const response = await axios.get(searchUrl);
+        const movies = response.data.data.data;
+
+        if (movies.length === 0) {
+            return reply("❌ No movies found.");
+        }
+
+        // Create a response message with the movie options
+        let message = "🎬 *CineSubz Movie Search Results:* 🎬\n\n";
+        movies.forEach((movie, index) => {
+            message += `*${index + 1}.* ${movie.title}\n`;
+            message += `📅 Year: ${movie.year}\n`;
+            message += `⭐ Rating: ${movie.rating}\n`;
+            message += `📝 Description: ${movie.description}\n`;
+            message += `🔗 More Info: ${movie.link}\n\n`;
+        });
+
+        message += "🔗 *Select a movie number to download:*";
+
+        // Send the search results
+        const msg = await conn.sendMessage(from, { text: message }, { quoted: mek });
+
+        // Listen for user response to select a movie
+        conn.ev.on('messages.upsert', async (msgUpdate) => {
+            const msg = msgUpdate.messages[0];
+            if (!msg.message || !msg.message.extendedTextMessage) return;
+
+            const selectedOption = msg.message.extendedTextMessage.text.trim();
+            const movieIndex = parseInt(selectedOption) - 1;
+
+            if (movieIndex >= 0 && movieIndex < movies.length) {
+                const movie = movies[movieIndex];
+                const downloadLinks = await axios.get(`https://apicine-api.vercel.app/api/cinesubz/download?url=${encodeURIComponent(movie.link)}&apikey=test1`);
+
+                const downloadData = downloadLinks.data.data;
+
+                if (downloadData.length === 0) {
+                    return reply("❌ No download links available for this movie.");
+                }
+
+                // Provide download links and send the file
+                let downloadMessage = `🎉 *Download Links for ${movie.title}:* 🎉\n\n`;
+
+                for (const link of downloadData) {
+                    downloadMessage += `📥 *${link.fileName}* (${link.fileSize})\n`;
+                    downloadMessage += `${link.href}\n\n`;
+
+                    // Optional: Send the first download link file directly
+                    const buff = await getBuffer(link.href); // Fetch the buffer data for the file
+                    await conn.sendMessage(from, { document: buff, caption: `Here is your movie: ${link.fileName}`, mimetype: "video/mp4", fileName: link.fileName }, { quoted: mek });
+                    break; // Exit after sending the first download link
+                }
+
+                await conn.sendMessage(from, { text: downloadMessage }, { quoted: mek });
+            } else {
+                reply("❌ Invalid selection. Please choose a valid movie number.");
+            }
+        });
+
+    } catch (e) {
+        console.error(e);
+        reply(`❌ Error: ${e.message}`);
+    }
+});
+
+
+
+
+
+
+
 cmd({
     pattern: "dl",
     react: "📥",
