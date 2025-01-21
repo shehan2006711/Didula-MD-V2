@@ -155,41 +155,9 @@ const isAdmins = isGroup ? groupAdmins.includes(sender) : false
 
 
 
-
-const reply = async (teks) => {
-    try {
-        await conn.sendMessage(from, {
-            document: { url: config.PDF_URL },
-            fileName: '◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆',
-            mimetype: "application/pdf",
-            fileLength: 99999999999999,
-            image: { url: config.ALIVE_IMG },
-            pageCount: 2024,
-            caption: teks,
-            contextInfo: {
-                forwardingScore: 999,
-                isForwarded: true,
-                forwardedNewsletterMessageInfo: {
-                    newsletterName: '◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆',
-                    newsletterJid: "120363343196447945@newsletter",
-                },
-                externalAdReply: {
-                    title: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*',
-                    body: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*',
-                    thumbnailUrl: 'https://i.ibb.co/tC37Q7B/20241220-122443.jpg',
-                    sourceUrl: 'https://wa.me/message/DIDULLTK7ZOGH1',
-                    mediaType: 1,
-                    renderLargerThumbnail: true
-                }
-            }
-        });
-    } catch (e) {
-        console.error(e);
-        reply(`${e}`);
-    }
-};
-
-
+const reply = (teks) => {
+conn.sendMessage(from, { text: "> ✨ᴅɪᴅᴜʟᴀ ᴍᴅ -" + teks }, { quoted: mek })
+}
 
 
 
