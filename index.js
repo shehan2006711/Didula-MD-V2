@@ -156,7 +156,7 @@ const isAdmins = isGroup ? groupAdmins.includes(sender) : false
 
 
 const reply = (teks) => {
-conn.sendMessage(from, { text: "> ✨ᴅɪᴅᴜʟᴀ ᴍᴅ -" + teks }, { quoted: mek })
+conn.sendMessage(from, { text: "> ✨ᴅɪᴅᴜʟᴀ ᴍᴅ - " + teks }, { quoted: mek })
 }
 
 
