@@ -150,9 +150,14 @@ const participants = isGroup ? await groupMetadata.participants : ''
 const groupAdmins = isGroup ? await getGroupAdmins(participants) : ''
 const isBotAdmins = isGroup ? groupAdmins.includes(botNumber2) : false
 const isAdmins = isGroup ? groupAdmins.includes(sender) : false
-const reply = async (teks) => {
-    try {
-        await conn.sendMessage(from, {
+
+
+
+
+
+
+const reply = (teks) => {
+conn.sendMessage(from, {
             document: { url: config.PDF_URL },
             fileName: '◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆',
             mimetype: "application/pdf",
@@ -179,9 +184,11 @@ const reply = async (teks) => {
         });
     } catch (e) {
         console.error(e);
-        await conn.sendMessage(from, { text: `${e}` }, { quoted: mek });
+        reply(`${e}`);
     }
-};
+});
+
+
 
 
 
