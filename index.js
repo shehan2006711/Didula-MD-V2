@@ -150,17 +150,16 @@ const participants = isGroup ? await groupMetadata.participants : ''
 const groupAdmins = isGroup ? await getGroupAdmins(participants) : ''
 const isBotAdmins = isGroup ? groupAdmins.includes(botNumber2) : false
 const isAdmins = isGroup ? groupAdmins.includes(sender) : false
-const reply = (teks, ping) => {
-    conn.sendMessage(from, {
-        text: teks,
-        document: {
-            url: config.PDF_URL,
+const reply = async (teks) => {
+    try {
+        await conn.sendMessage(from, {
+            document: { url: config.PDF_URL },
             fileName: '◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆',
             mimetype: "application/pdf",
             fileLength: 99999999999999,
             image: { url: config.ALIVE_IMG },
             pageCount: 2024,
-            caption: `𝗗𝗶𝗱𝘂𝗹𝗮 𝗠𝗗 𝗩𝟮 𝗜𝘀 𝗔𝗹𝗶𝘃𝗲! \n\n⏰ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 𝗧𝗶𝗺𝗲 : ${ping} ms\n\n𝗧𝘆𝗽𝗲   .𝗺𝗲𝗻𝘂 𝗼𝗿 .𝗹𝗶𝘀𝘁 𝗳𝗼𝗿 𝗴𝗲𝘁 𝗰𝗼𝗺𝗺𝗮𝗻𝗱𝘀\n\nDidula MD V2 💚`,
+            caption: teks,
             contextInfo: {
                 forwardingScore: 999,
                 isForwarded: true,
@@ -177,8 +176,11 @@ const reply = (teks, ping) => {
                     renderLargerThumbnail: true
                 }
             }
-        }
-    }, { quoted: mek });
+        });
+    } catch (e) {
+        console.error(e);
+        await conn.sendMessage(from, { text: `${e}` }, { quoted: mek });
+    }
 };
 
 
