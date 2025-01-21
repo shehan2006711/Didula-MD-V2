@@ -156,8 +156,9 @@ const isAdmins = isGroup ? groupAdmins.includes(sender) : false
 
 
 
-const reply = (teks) => {
-conn.sendMessage(from, {
+const reply = async (teks) => {
+    try {
+        await conn.sendMessage(from, {
             document: { url: config.PDF_URL },
             fileName: '◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆',
             mimetype: "application/pdf",
@@ -186,10 +187,7 @@ conn.sendMessage(from, {
         console.error(e);
         reply(`${e}`);
     }
-});
-
-
-
+};
 
 
 
