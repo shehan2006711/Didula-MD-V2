@@ -28,6 +28,7 @@ const { sms, downloadMediaMessage } = require('./lib/msg')
 const axios = require('axios')
 const { File } = require('megajs')
 const prefix = '.'
+const pdfUrl = "https://i.ibb.co/tC37Q7B/20241220-122443.jpg";
 
 const ownerNumber = ['94771820962']
 
@@ -149,9 +150,41 @@ const participants = isGroup ? await groupMetadata.participants : ''
 const groupAdmins = isGroup ? await getGroupAdmins(participants) : ''
 const isBotAdmins = isGroup ? groupAdmins.includes(botNumber2) : false
 const isAdmins = isGroup ? groupAdmins.includes(sender) : false
-const reply = (teks) => {
-conn.sendMessage(from, { text: teks }, { quoted: mek })
-}
+const reply = (teks, ping) => {
+    conn.sendMessage(from, {
+        text: teks,
+        document: {
+            url: config.PDF_URL,
+            fileName: '◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆',
+            mimetype: "application/pdf",
+            fileLength: 99999999999999,
+            image: { url: config.ALIVE_IMG },
+            pageCount: 2024,
+            caption: `𝗗𝗶𝗱𝘂𝗹𝗮 𝗠𝗗 𝗩𝟮 𝗜𝘀 𝗔𝗹𝗶𝘃𝗲! \n\n⏰ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 𝗧𝗶𝗺𝗲 : ${ping} ms\n\n𝗧𝘆𝗽𝗲   .𝗺𝗲𝗻𝘂 𝗼𝗿 .𝗹𝗶𝘀𝘁 𝗳𝗼𝗿 𝗴𝗲𝘁 𝗰𝗼𝗺𝗺𝗮𝗻𝗱𝘀\n\nDidula MD V2 💚`,
+            contextInfo: {
+                forwardingScore: 999,
+                isForwarded: true,
+                forwardedNewsletterMessageInfo: {
+                    newsletterName: '◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆',
+                    newsletterJid: "120363343196447945@newsletter",
+                },
+                externalAdReply: {
+                    title: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*',
+                    body: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*',
+                    thumbnailUrl: 'https://i.ibb.co/tC37Q7B/20241220-122443.jpg',
+                    sourceUrl: 'https://wa.me/message/DIDULLTK7ZOGH1',
+                    mediaType: 1,
+                    renderLargerThumbnail: true
+                }
+            }
+        }
+    }, { quoted: mek });
+};
+
+
+
+
+
 
 conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
               let mime = '';
