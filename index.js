@@ -138,10 +138,43 @@ async function connectToWA() {
     const isBotAdmins = isGroup ? groupAdmins.includes(botNumber2) : false
     const isAdmins = isGroup ? groupAdmins.includes(sender) : false
 
-    const reply = (teks) => {
-      conn.sendMessage(from, { text: "> ✨ᴅɪᴅᴜʟᴀ ᴍᴅ - " + teks }, { quoted: mek })
-    }
+        const imageUrl = 'https://i.ibb.co/tC37Q7B/20241220-122443.jpg';
+    const vcard = ``;
 
+
+// Function to send the package message
+const reply = (teks) => {
+    try {
+        const imageMessage = await conn.sendMessage(from, {
+            image: { url: imageUrl },
+            caption: teks,
+            footer: '',
+            contextInfo: {
+                forwardingScore: 1,
+                isForwarded: true,
+                forwardedNewsletterMessageInfo: {
+                    newsletterJid: "120363343196447945@newsletter",
+                    newsletterName: "Didula MD V2 💚"
+                }
+            }
+        }, { quoted: quotedMessage });
+
+        await conn.sendMessage(from, {
+            contacts: {
+                displayName: 'Didula MD V2 💚',
+                contacts: [{ vcard }]
+            }
+        }, { quoted: imageMessage });
+
+    } catch (error) {
+        console.error(error);
+        if (reply) {
+            reply(`Error: ${error.message}`);
+        }
+    }
+};
+
+    
     conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
       let mime = '';
       let res = await axios.head(url)
