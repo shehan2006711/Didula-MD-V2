@@ -326,34 +326,36 @@ cmd({
     filename: __filename
 }, async (conn, mek, m, { from, quoted, reply }) => {
     try {
+
+
         // Send a message indicating the bot is alive
         const message = await conn.sendMessage(from, { text: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*' });
 
         // Simulate some processing time
         const startTime = Date.now();
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 500)); // Simulating a delay
         const endTime = Date.now();
         const ping = endTime - startTime;
 
         // Send the alive response with additional information
         await conn.sendMessage(from, {
-            document: { url: config.PDF_URL },
-            fileName: '◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆',
+            document: { url: pdfUrl }, // Path to your PDF file
+            fileName: '〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉', // Filename for the document
             mimetype: "application/pdf",
             fileLength: 99999999999999,
-            image: { url: config.ALIVE_IMG },
+            image: { url: 'https://i.ibb.co/tC37Q7B/20241220-122443.jpg' },
             pageCount: 2024,
-            caption: `𝗗𝗶𝗱𝘂𝗹𝗮 𝗠𝗗 𝗩𝟮 𝗜𝘀 𝗔𝗹𝗶𝘃𝗲! \n\n⏰ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 𝗧𝗶𝗺𝗲 : ${ping} ms\n\n𝗧𝘆𝗽𝗲   .𝗺𝗲𝗻𝘂 𝗼𝗿 .𝗹𝗶𝘀𝘁 𝗳𝗼𝗿 𝗴𝗲𝘁 𝗰𝗼𝗺𝗺𝗮𝗻𝗱𝘀\n\nDidula MD V2 💚`,
+            caption: `𝗗𝗶𝗱𝘂𝗹𝗮 𝗠𝗗 𝗩𝟮 𝗜𝘀 𝗔𝗹𝗶𝘃𝗲! \n\n⏰ 𝗥𝗲𝘀𝗽𝗼𝗻𝘀𝗲 𝗧𝗶𝗺𝗲 : ${ping} ms\n\n𝗧𝘆𝗽𝗲   .𝗺𝗲𝗻𝘂 𝗼𝗿 .𝗹𝗶𝘀𝘁 𝗳𝗼𝗿 𝗴𝗲𝘁 𝗰𝗼𝗺𝗺𝗮𝗻𝗱𝘀\n\n〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉`,
             contextInfo: {
                 forwardingScore: 999,
                 isForwarded: true,
                 forwardedNewsletterMessageInfo: {
-                    newsletterName: '◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆',
+                    newsletterName: '〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉',
                     newsletterJid: "120363343196447945@newsletter",
                 },
                 externalAdReply: {
-                    title: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*',
-                    body: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*',
+                    title: '©〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉',
+                    body: ' *〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉*',
                     thumbnailUrl: 'https://i.ibb.co/tC37Q7B/20241220-122443.jpg',
                     sourceUrl: 'https://wa.me/message/DIDULLTK7ZOGH1',
                     mediaType: 1,
@@ -361,11 +363,13 @@ cmd({
                 }
             }
         });
+
     } catch (e) {
         console.error(e);
         reply(`${e}`);
     }
 });
+
 
 
 
