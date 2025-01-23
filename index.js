@@ -98,32 +98,7 @@ conn.ev.on('creds.update', saveCreds)
 
 
 
-conn.ev.on('call', async (call) => {
-        console.log(call);
-        if (!Array.isArray(call)) {
-          console.error("Invalid call data");
-          return;
-        }
 
-        for (let callInfo of call) {
-          if (!callInfo.isGroup) {
-            if (callInfo.status === "offer") {
-              const message = `*${conn.user.name}* can't receive ${callInfo.isVideo ? `video` : `voice`} call. Sorry @${callInfo.from.split('@')[0]}, you will be blocked. If called accidentally please contact the owner to be unblocked!`;
-
-              try {
-                // Send a message mentioning the user
-                await conn.sendMessage(callInfo.from, { text: message, mentions: [callInfo.from] }, MessageType.text);
-                await sleep(8000); // Ensure sleep is properly awaited
-              } catch (error) {
-                console.error("Error sending message:", error);
-              }
-            }
-          }
-        }
-      });
-
-    }
-  });
 
 conn.ev.on('messages.upsert', async(mek) => {
 mek = mek.messages[0]
