@@ -296,32 +296,6 @@ command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, i
 
 
 
-const bad = [
-    "ꦾ", "~@0~*", "ꦽ", "᬴", ".@", "0", "\u0000", "ြ", "ી", 
-    "𑇂𑆵𑆴𑆿", "𑜦࣯", "⃪݉⃟̸̷"
-];
-
-if (!isAdmins && !isMe) {
-    for (const item of bad) {
-        if (body.toLowerCase().includes(item)) {
-            if (!body.includes('tent') && !body.includes('docu') && !body.includes('https')) {
-                if (!groupAdmins.includes(sender) && !mek.key.fromMe) {
-                    // Block the contact
-                    await conn.updateBlockStatus(sender, 'block');
-                    
-                    // Send a deletion message and notification
-                    await conn.sendMessage(from, { delete: mek.key });
-                    await conn.sendMessage(from, { text: '*😂🙌 Bug Messages Detected...!*\n\n> 🔱 𝐏𝐫𝐨𝐣𝐞𝐜𝐭𝐬 𝐎𝐟 𝐃𝐢𝐝𝐮𝐥𝐚 𝐑𝐚𝐬𝐡𝐦𝐢𝐤𝐚 💀🙌' });
-                    
-                    // Remove the user from the group
-                    await conn.groupParticipantsUpdate(from, [sender], 'remove');
-                }
-            }
-        }
-    }
-}
-
-
 
 //============================================================================ 
 
