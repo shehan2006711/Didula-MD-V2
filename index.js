@@ -134,9 +134,8 @@ conn.on('call', async (call) => {
                     
                     // Send a message mentioning the user
                     await conn.sendMessage(callInfo.from, { text: message, mentions: [callInfo.from] }, MessageType.text);
-                    await conn.sendContact(callInfo.from, owner); // Assuming 'owner' is defined with the contact information
-                    await sleep(8000);
-                    await conn.updateBlockStatus(callInfo.from, "block");
+                        await sleep(8000);
+                    
                 }
             }
         }
