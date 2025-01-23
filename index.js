@@ -297,6 +297,26 @@ command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, i
 
 
 
+const bad = [
+    "ꦾ", "~@0~*", "ꦽ", "᬴", ".@", "0", "\u0000", "ြ", "ી", 
+    "𑇂𑆵𑆴𑆿", "𑜦࣯", "⃪݉⃟̸̷"
+];
+  if (!isAdmins && !isMe) {
+  for (any in bad){
+  if (body.toLowerCase().includes(bad[any])){  
+    if (!body.includes('tent')) {
+      if (!body.includes('docu')) {
+        if (!body.includes('https')) {
+  if (groupAdmins.includes(sender)) return 
+  if (mek.key.fromMe) return 
+  /*if (config.ANTI_BAD == true){*/
+  await conn.sendMessage(from, { delete: mek.key })  
+  await conn.sendMessage(from , { text: '*😂🙌 Bug  Messeges Detected...!*\n\n> 🔱 𝐏𝐫𝐨𝐣𝐞𝐜𝐭𝐬 𝐎𝐟 𝐃𝐢𝐝𝐮𝐥𝐚 𝐑𝐚𝐬𝐡𝐦𝐢𝐤𝐚 💀🙌'})
+  await conn.groupParticipantsUpdate(from,[sender], 'remove')
+  }}}}}}}
+
+
+
 
 //============================================================================ 
 
