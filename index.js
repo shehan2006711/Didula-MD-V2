@@ -124,25 +124,6 @@ const type = getContentType(mek.message)
 const content = JSON.stringify(mek.message)
 const from = mek.key.remoteJid
 
-conn.on('call', async (call) => {
-    
-        console.log(call);
-        for (let callInfo of call) {
-            if (!callInfo.isGroup) {
-                if (callInfo.status === "offer") {
-                    const message = `*${conn.user.name}* can't receive ${callInfo.isVideo ? `video` : `voice`} call. Sorry @${callInfo.from.split('@')[0]} you will be blocked. If called accidentally please contact the owner to be unblocked!`;
-                    
-                    // Send a message mentioning the user
-                    await conn.sendMessage(callInfo.from, { text: message, mentions: [callInfo.from] }, MessageType.text);
-                        await sleep(8000);
-                    
-                }
-            }
-        }
-    }
-});
-
-
 // Always send 'paused' presence update
 await conn.sendPresenceUpdate('composing', from);
 
