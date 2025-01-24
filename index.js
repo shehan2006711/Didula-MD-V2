@@ -139,11 +139,9 @@ async function connectToWA() {
     const isAdmins = isGroup ? groupAdmins.includes(sender) : false
 
         const imageUrl = 'https://i.ibb.co/tC37Q7B/20241220-122443.jpg';
-    const vcard = ``;
-
 
 // Function to send the package message
-const reply = (teks) => {
+const reply = async (teks) => {
     try {
         const imageMessage = await conn.sendMessage(from, {
             image: { url: imageUrl },
@@ -159,20 +157,13 @@ const reply = (teks) => {
             }
         }, { quoted: quotedMessage });
 
-        await conn.sendMessage(from, {
-            contacts: {
-                displayName: 'Didula MD V2 💚',
-                contacts: [{ vcard }]
-            }
-        }, { quoted: imageMessage });
-
     } catch (error) {
         console.error(error);
-        if (reply) {
-            reply(`Error: ${error.message}`);
-        }
+        await reply(`Error: ${error.message}`); // Ensure this is awaited as well
     }
 };
+
+
 
     
     conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
