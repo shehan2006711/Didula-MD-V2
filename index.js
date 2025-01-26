@@ -140,8 +140,15 @@ async function connectToWA() {
 
         const imageUrl = 'https://i.ibb.co/tC37Q7B/20241220-122443.jpg';
 
+    const reply = (teks) => {
+      conn.sendMessage(from, { text: "> ✨ᴅɪᴅᴜʟᴀ ᴍᴅ - " + teks }, { quoted: mek })
+    }
+
+
+
+
 // Function to send the package message
-const reply = async (teks) => {
+const sreply = async (teks) => {
     try {
         const imageMessage = await conn.sendMessage(from, {
             image: { url: imageUrl },
