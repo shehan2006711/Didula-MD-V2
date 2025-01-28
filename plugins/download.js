@@ -184,25 +184,23 @@ cmd({
   }
 });
 
-
-
-// Download Videos
+// Video Download Plugin
 cmd({
-    pattern: "video",
-    react: "📽️",
-    desc: "Download videos",
-    category: "download",
-    filename: __filename
+  pattern: "video",
+  react: "📽️",
+  desc: "Download videos",
+  category: "download",
+  filename: __filename
 }, async (conn, mek, m, { from, q, reply }) => {
-    try {
-        if (!q) return reply('⛔ Please give a video title');
-        const videodl = await fetchJson(`https://api.davidcyriltech.my.id/download/ytmp4?url=${q}`);
-        const data = videodl.result;
-        const formatViews = views => views >= 1_000_000_000 ? `${(views / 1_000_000_000).toFixed(1)}B` : views >= 1_000_000 ? `${(views / 1_000_000).toFixed(1)}M` : views >= 1_000 ? `${(views / 1_000).toFixed(1)}K` : views.toString();
-        let dec = `
+  try {
+    if (!q) return reply('⛔ Please provide a video title or URL');
+    const videodl = await fetchJson(`https://api.davidcyriltech.my.id/download/ytmp4?url=${q}`);
+    const data = videodl.result;
+    const formatViews = views => views >= 1_000_000_000 ? `${(views / 1_000_000_000).toFixed(1)}B` : views >= 1_000_000 ? `${(views / 1_000_000).toFixed(1)}M` : views >= 1_000 ? `${(views / 1_000).toFixed(1)}K` : views.toString();
+    let dec = `
 🌟 *Video Spotlight: Didula MD V2* 🌟
 
-🎵 *Title:* ${data.title}  
+🎥 *Title:* ${data.title}  
 👤 *Artist:* ${data.author}  
 📝 *Description:* ${data.description}  
 ⏰ *Duration:* ${data.duration}  
@@ -211,68 +209,64 @@ cmd({
 ---
 
 🔗 *Options:*  
-1️⃣ Watch Video 🎥  
-2️⃣ Download Document 📂  
+1️⃣ Watch Video  
+2️⃣ Download Document  
 `;
 
-        const or = await conn.sendMessage(from, {
-            image: {
-                url: data.thumbnail
-            }, caption: dec
-        }, {
-            quoted: mek
-        });
+    const or = await conn.sendMessage(from, {
+      image: {
+        url: data.thumbnail
+      }, caption: dec
+    }, {
+      quoted: mek
+    });
 
-        conn.ev.on('messages.upsert', async (msgUpdate) => {
-            const msg = msgUpdate.messages[0];
-            if (!msg.message || !msg.message.extendedTextMessage) return;
+    conn.ev.on('messages.upsert', async (msgUpdate) => {
+      const msg = msgUpdate.messages[0];
+      if (!msg.message || !msg.message.extendedTextMessage) return;
 
-            const selectedOption = msg.message.extendedTextMessage.text.trim();
+      const selectedOption = msg.message.extendedTextMessage.text.trim();
 
-            if (msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.stanzaId === or.key.id) {
-                switch (selectedOption) {
-                    case '1':
-                        await conn.sendMessage(from, {
-                            video: {
-                                url: data.download_url
-                            }, mimetype: "video/mp4"
-                        }, {
-                            quoted: mek
-                        });
-                        await conn.sendMessage(from, {
-                            react: {
-                                text: '✔️', key: mek.key
-                            }
-                        });
-                        break;
-                    case '2':
-                        await conn.sendMessage(from, {
-                            document: {
-                                url: data.download_url
-                            }, mimetype: "video/mp4", fileName: `${data.title}.mp4`, caption: "> Didula MD V2 💚 "
-                        }, {
-                            quoted: mek
-                        });
-                        await conn.sendMessage(from, {
-                            react: {
-                                text: '✔️', key: mek.key
-                            }
-                        });
-                        break;
-                    default:
-                        reply("Invalid option. Please select a valid option🔴");
-                }
-            }
-        });
-
-    } catch (e) {
-        console.error(e);
-        reply(`Error: ${e}`);
-    }
+      if (msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.stanzaId === or.key.id) {
+        switch (selectedOption) {
+          case '1':
+            await conn.sendMessage(from, {
+              video: {
+                url: data.download_url
+              }, mimetype: "video/mp4"
+            }, {
+              quoted: mek
+            });
+            await conn.sendMessage(from, {
+              react: {
+                text: '✔️', key: mek.key
+              }
+            });
+            break;
+          case '2':
+            await conn.sendMessage(from, {
+              document: {
+                url: data.download_url
+              }, mimetype: "video/mp4", fileName: `${data.title}.mp4`, caption: "> Didula MD V2 💚 "
+            }, {
+              quoted: mek
+            });
+            await conn.sendMessage(from, {
+              react: {
+                text: '✔️', key: mek.key
+              }
+            });
+            break;
+          default:
+            reply("Invalid option. Please select a valid option🔴");
+        }
+      }
+    });
+  } catch (e) {
+    console.error(e);
+    reply(`Error: ${e}`);
+  }
 });
-
-
-
 
 
 // Download Wallpaper
