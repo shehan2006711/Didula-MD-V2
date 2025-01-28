@@ -187,86 +187,50 @@ cmd({
 // Video Download Plugin
 cmd({
   pattern: "video",
-  react: "📽️",
-  desc: "Download videos",
-  category: "download",
+  react: '🎥',
+  desc: "Download video from YouTube by searching for keywords (using API 2).",
+  category: "video",
+  use: ".play2 <video name or keywords>",
   filename: __filename
-}, async (conn, mek, m, { from, q, reply }) => {
+}, async (conn, mek, msg, { from, args, reply }) => {
   try {
-    if (!q) return reply('⛔ Please provide a video title or URL');
-    const videodl = await fetchJson(`https://api.davidcyriltech.my.id/download/ytmp4?url=${q}`);
-    const data = videodl.result;
-    const formatViews = views => views >= 1_000_000_000 ? `${(views / 1_000_000_000).toFixed(1)}B` : views >= 1_000_000 ? `${(views / 1_000_000).toFixed(1)}M` : views >= 1_000 ? `${(views / 1_000).toFixed(1)}K` : views.toString();
-    let dec = `
-🌟 *Video Spotlight: Didula MD V2* 🌟
+    const searchQuery = args.join(" ");
+    if (!searchQuery) {
+      return reply("*Please provide a video name or keywords to search for.*");
+    }
 
-🎥 *Title:* ${data.title}  
-👤 *Artist:* ${data.author}  
-📝 *Description:* ${data.description}  
-⏰ *Duration:* ${data.duration}  
-👁️ *Views:* ${formatViews(data.views)}  
+    reply("*🎬 Searching for the video...*");
 
----
+    const searchResults = await yts(searchQuery);
+    if (!searchResults.videos || searchResults.videos.length === 0) {
+      return reply(`❌ No results found for "${searchQuery}".`);
+    }
 
-🔗 *Options:*  
-1️⃣ Watch Video  
-2️⃣ Download Document  
-`;
+    const firstResult = searchResults.videos[0];
+    const videoUrl = firstResult.url;
 
-    const or = await conn.sendMessage(from, {
-      image: {
-        url: data.thumbnail
-      }, caption: dec
-    }, {
-      quoted: mek
-    });
+    // Call the API to download the video
+    const apiUrl = `https://api.davidcyriltech.my.id/download/ytmp4?url=${videoUrl}`; // Update endpoint for video
+    const response = await axios.get(apiUrl);
+    if (!response.data.success) {
+      return reply(`❌ Failed to fetch video for "${searchQuery}".`);
+    }
 
-    conn.ev.on('messages.upsert', async (msgUpdate) => {
-      const msg = msgUpdate.messages[0];
-      if (!msg.message || !msg.message.extendedTextMessage) return;
+    const { title, download_url } = response.data.result;
 
-      const selectedOption = msg.message.extendedTextMessage.text.trim();
+    // Send the video file
+    await conn.sendMessage(from, {
+      video: { url: download_url },
+      mimetype: 'video/mp4',
+      caption: `✅ *${title}* has been downloaded successfully!`
+    }, { quoted: mek });
 
-      if (msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.stanzaId === or.key.id) {
-        switch (selectedOption) {
-          case '1':
-            await conn.sendMessage(from, {
-              video: {
-                url: data.download_url
-              }, mimetype: "video/mp4"
-            }, {
-              quoted: mek
-            });
-            await conn.sendMessage(from, {
-              react: {
-                text: '✔️', key: mek.key
-              }
-            });
-            break;
-          case '2':
-            await conn.sendMessage(from, {
-              document: {
-                url: data.download_url
-              }, mimetype: "video/mp4", fileName: `${data.title}.mp4`, caption: "> Didula MD V2 💚 "
-            }, {
-              quoted: mek
-            });
-            await conn.sendMessage(from, {
-              react: {
-                text: '✔️', key: mek.key
-              }
-            });
-            break;
-          default:
-            reply("Invalid option. Please select a valid option🔴");
-        }
-      }
-    });
-  } catch (e) {
-    console.error(e);
-    reply(`Error: ${e}`);
+  } catch (error) {
+    console.error(error);
+    reply("❌ An error occurred while processing your request.");
   }
 });
+
 
 
 // Download Wallpaper
