@@ -15,7 +15,7 @@ cmd({
 },
 async(conn, mek, m, { from, q, reply }) => {
   try {
-    if (!q) return reply('*Please provide a movie URL!*');
+    if (!q) return sreply('*Please provide a movie URL!*');
 
     const download_info = await fetchJson(`${apilink}/download?url=${encodeURIComponent(q)}&apikey=vajiratech`);
 
