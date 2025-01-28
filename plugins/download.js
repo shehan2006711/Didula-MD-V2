@@ -145,18 +145,16 @@ cmd({
 }, async (conn, mek, m, { from, q, reply }) => {
     try {
         if (!q) return reply('⛔ Please give a song title');
-        const search = await yts(q);
-        const data = search.videos[0];
-        const url = data.url;
+        const songdl = await fetchJson(`https://api.davidcyriltech.my.id/download/ytmp3?url=${q}`);
+        const data = songdl.result;
         const formatViews = views => views >= 1_000_000_000 ? `${(views / 1_000_000_000).toFixed(1)}B` : views >= 1_000_000 ? `${(views / 1_000_000).toFixed(1)}M` : views >= 1_000 ? `${(views / 1_000).toFixed(1)}K` : views.toString();
         let desc = `
 🌟 *Song Spotlight: Didula MD V2* 🌟
 
 🎵 *Title:* ${data.title}  
-👤 *Artist:* ${data.author.name}  
+👤 *Artist:* ${data.author}  
 📝 *Description:* ${data.description}  
-⏰ *Duration:* ${data.timestamp}  
-⏱️ *Posted:* ${data.ago} ago  
+⏰ *Duration:* ${data.duration}  
 👁️ *Views:* ${formatViews(data.views)}  
 
 ---
@@ -174,8 +172,6 @@ cmd({
             quoted: mek
         });
 
-        const data1 = await fetchJson(`https://apitest1-f7dcf17bd59b.herokuapp.com/download/ytmp3?url=${url}`);
-
         conn.ev.on('messages.upsert', async (msgUpdate) => {
             const msg = msgUpdate.messages[0];
             if (!msg.message || !msg.message.extendedTextMessage) return;
@@ -187,7 +183,7 @@ cmd({
                     case '1':
                         await conn.sendMessage(from, {
                             audio: {
-                                url: data1.result.dl_link
+                                url: data.download_url
                             }, mimetype: "audio/mpeg"
                         }, {
                             quoted: mek
@@ -201,7 +197,7 @@ cmd({
                     case '2':
                         await conn.sendMessage(from, {
                             document: {
-                                url: data1.result.dl_link
+                                url: data.download_url
                             }, mimetype: "audio/mpeg", fileName: `${data.title}.mp3`, caption: "> Didula MD V2 💚 "
                         }, {
                             quoted: mek
@@ -234,18 +230,16 @@ cmd({
 }, async (conn, mek, m, { from, q, reply }) => {
     try {
         if (!q) return reply('⛔ Please give a video title');
-        const search = await yts(q);
-        const data = search.videos[0];
-        const url = data.url;
+        const videodl = await fetchJson(`https://api.davidcyriltech.my.id/download/ytmp4?url=${q}`);
+        const data = videodl.result;
         const formatViews = views => views >= 1_000_000_000 ? `${(views / 1_000_000_000).toFixed(1)}B` : views >= 1_000_000 ? `${(views / 1_000_000).toFixed(1)}M` : views >= 1_000 ? `${(views / 1_000).toFixed(1)}K` : views.toString();
         let dec = `
 🌟 *Video Spotlight: Didula MD V2* 🌟
 
 🎵 *Title:* ${data.title}  
-👤 *Artist:* ${data.author.name}  
+👤 *Artist:* ${data.author}  
 📝 *Description:* ${data.description}  
-⏰ *Duration:* ${data.timestamp}  
-⏱️ *Posted:* ${data.ago} ago  
+⏰ *Duration:* ${data.duration}  
 👁️ *Views:* ${formatViews(data.views)}  
 
 ---
@@ -263,8 +257,6 @@ cmd({
             quoted: mek
         });
 
-        const data1 = await fetchJson(`https://api.giftedtech.my.id/api/download/dlmp4?apikey=gifted&url=${url}`);
-
         conn.ev.on('messages.upsert', async (msgUpdate) => {
             const msg = msgUpdate.messages[0];
             if (!msg.message || !msg.message.extendedTextMessage) return;
@@ -276,7 +268,7 @@ cmd({
                     case '1':
                         await conn.sendMessage(from, {
                             video: {
-                                url: data1.result.download_url
+                                url: data.download_url
                             }, mimetype: "video/mp4"
                         }, {
                             quoted: mek
@@ -290,7 +282,7 @@ cmd({
                     case '2':
                         await conn.sendMessage(from, {
                             document: {
-                                url: data1.result.download_url
+                                url: data.download_url
                             }, mimetype: "video/mp4", fileName: `${data.title}.mp4`, caption: "> Didula MD V2 💚 "
                         }, {
                             quoted: mek
@@ -312,6 +304,10 @@ cmd({
         reply(`Error: ${e}`);
     }
 });
+
+
+
+
 
 // Download Wallpaper
 cmd({
