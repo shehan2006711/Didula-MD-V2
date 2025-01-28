@@ -135,90 +135,56 @@ cmd({
     }
 });
 
-// Download Songs
+
+
 cmd({
-    pattern: "song",
-    react: "🎵",
-    desc: "Download songs",
-    category: "download",
-    filename: __filename
-}, async (conn, mek, m, { from, q, reply }) => {
-    try {
-        if (!q) return reply('⛔ Please give a song title');
-        const songdl = await fetchJson(`https://api.davidcyriltech.my.id/download/ytmp3?url=${q}`);
-        const data = songdl.result;
-        const formatViews = views => views >= 1_000_000_000 ? `${(views / 1_000_000_000).toFixed(1)}B` : views >= 1_000_000 ? `${(views / 1_000_000).toFixed(1)}M` : views >= 1_000 ? `${(views / 1_000).toFixed(1)}K` : views.toString();
-        let desc = `
-🌟 *Song Spotlight: Didula MD V2* 🌟
-
-🎵 *Title:* ${data.title}  
-👤 *Artist:* ${data.author}  
-📝 *Description:* ${data.description}  
-⏰ *Duration:* ${data.duration}  
-👁️ *Views:* ${formatViews(data.views)}  
-
----
-
-🔗 *Options:*  
-1️⃣ Listen to Audio 🎶  
-2️⃣ Download Document 📂  
-`;
-
-        const or = await conn.sendMessage(from, {
-            image: {
-                url: data.thumbnail
-            }, caption: desc
-        }, {
-            quoted: mek
-        });
-
-        conn.ev.on('messages.upsert', async (msgUpdate) => {
-            const msg = msgUpdate.messages[0];
-            if (!msg.message || !msg.message.extendedTextMessage) return;
-
-            const selectedOption = msg.message.extendedTextMessage.text.trim();
-
-            if (msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.stanzaId === or.key.id) {
-                switch (selectedOption) {
-                    case '1':
-                        await conn.sendMessage(from, {
-                            audio: {
-                                url: data.download_url
-                            }, mimetype: "audio/mpeg"
-                        }, {
-                            quoted: mek
-                        });
-                        await conn.sendMessage(from, {
-                            react: {
-                                text: '✔️', key: mek.key
-                            }
-                        });
-                        break;
-                    case '2':
-                        await conn.sendMessage(from, {
-                            document: {
-                                url: data.download_url
-                            }, mimetype: "audio/mpeg", fileName: `${data.title}.mp3`, caption: "> Didula MD V2 💚 "
-                        }, {
-                            quoted: mek
-                        });
-                        await conn.sendMessage(from, {
-                            react: {
-                                text: '✔️', key: mek.key
-                            }
-                        });
-                        break;
-                    default:
-                        reply("Invalid option. Please select a valid option🔴");
-                }
-            }
-        });
-
-    } catch (e) {
-        console.error(e);
-        reply(`Error: ${e}`);
+  pattern: "song",
+  react: '🎶',
+  desc: "Download audio from YouTube by searching for keywords (using API 2).",
+  category: "music",
+  use: ".play1 <song name or keywords>",
+  filename: __filename
+}, async (conn, mek, msg, { from, args, reply }) => {
+  try {
+    const searchQuery = args.join(" ");
+    if (!searchQuery) {
+      return reply("*Please provide a song name or keywords to search for.*");
     }
+
+    reply("*🎧 Searching for the song...*");
+
+    const searchResults = await yts(searchQuery);
+    if (!searchResults.videos || searchResults.videos.length === 0) {
+      return reply(`❌ No results found for "${searchQuery}".`);
+    }
+
+    const firstResult = searchResults.videos[0];
+    const videoUrl = firstResult.url;
+
+    // Call the API to download the audio
+    const apiUrl = `https://api.davidcyriltech.my.id/download/ytmp3?url=${videoUrl}`;
+    const response = await axios.get(apiUrl);
+    if (!response.data.success) {
+      return reply(`❌ Failed to fetch audio for "${searchQuery}".`);
+    }
+
+    const { title, download_url } = response.data.result;
+
+    // Send the audio file
+    await conn.sendMessage(from, {
+      audio: { url: download_url },
+      mimetype: 'audio/mp4',
+      ptt: false
+    }, { quoted: mek });
+
+    reply(`✅ *${title}* has been downloaded successfully!`);
+  } catch (error) {
+    console.error(error);
+    reply("❌ An error occurred while processing your request.");
+  }
 });
+
+
 
 // Download Videos
 cmd({
