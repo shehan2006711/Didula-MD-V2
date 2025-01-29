@@ -336,35 +336,28 @@ cmd({
 // Ping Command
 cmd({
     pattern: "ping",
-    alias: ["pong"],
-    react: "🏓",
-    desc: "Check the bot's responsiveness",
+    react: "🤖",
+    alias: ["speed"],
+    desc: "Check bot\'s ping",
     category: "main",
     use: '.ping',
     filename: __filename
 },
-async(conn, mek, m, { from, reply }) => {
-    const vajiralod = [
-        "《 █▒▒▒▒▒▒▒▒▒▒▒》10%",
-        "《 ████▒▒▒▒▒▒▒▒》30%",
-        "《 ███████▒▒▒▒▒》50%",
-        "《 ██████████▒▒》80%",
-        "《 ████████████》100%",
-        "𝗖𝗵𝗲𝗰𝗸𝗶𝗻𝗴 𝗗𝗶𝗱𝘂𝗹𝗮 𝗠𝗗 𝗦𝗽𝗲𝗲𝗱 💚..."
-    ];
+async(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply}) => {
+try{
+var inital = new Date().getTime();
+let ping = await conn.sendMessage(from , { text: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*'  }, { quoted: mek } )
+var final = new Date().getTime();
+await conn.sendMessage(from, { delete: ping.key })
+return await conn.sendMessage(from , { text: '*🔥Pong*\n *' + (final - inital) + ' ms* '  }, { quoted: mek } )
+} catch (e) {
+reply('*Error !!*')
+l(e)
+}
+})
 
-    const start = Date.now();
-    let { key } = await conn.sendMessage(from, { text: '*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*' });
 
-    for (let i = 0; i < vajiralod.length; i++) {
-        await conn.sendMessage(from, { text: vajiralod[i], edit: key });
-        await new Promise(resolve => setTimeout(resolve, 500));
-    }
 
-    const end = Date.now();
-    const latency = end - start;
-    await reply(`𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐒𝐩𝐞𝐞𝐝 💚: ${latency}𝐦𝐬`);
-});
 
 // Alive Command
 cmd({
