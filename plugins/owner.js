@@ -1,8 +1,15 @@
 
 // owner.js - All Owner Category Commands
 
-const { cmd, commands } = require('../command');
-const config = require('../config');
+const config = require('../config')
+const {cmd , commands} = require('../command')
+const os = require("os")
+const {runtime} = require('../lib/functions')
+const axios = require('axios')
+const {sleep} = require('../lib/functions')
+
+
+
 
 // Block User Command
 cmd({
