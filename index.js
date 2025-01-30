@@ -311,10 +311,8 @@ const sreply = async (teks) => {
 
 })
 }
-app.get("/", (req, res) => {
-res.send("hey, bot started✅");
-});
-app.listen(port, () => console.log(`Server listening on http://localhost:${port}`));
+app.get("/", (req, res) => res.sendFile(require('path').join(__dirname, "./index.html")));
+app.listen(port, () => console.log(`✅ Didula MD- Server Running...`));
 setTimeout(() => {
-connectToWA()
-}, 4000);  
+    connectToWA()
+}, 4000);
