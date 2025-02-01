@@ -28,10 +28,10 @@ const util = require('util')
 const { sms, downloadMediaMessage } = require('./lib/msg')
 const axios = require('axios')
 const { File } = require('megajs')
-const prefix = '#'
+const prefix = '.'
 const pdfUrl = "https://i.ibb.co/tC37Q7B/20241220-122443.jpg";
 
-const ownerNumber = ['94771820962']
+const ownerNumber = ['94741671668']
 
 // Session handling
 if (!fs.existsSync(__dirname + '/auth_info_baileys/creds.json')) {
