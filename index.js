@@ -112,8 +112,6 @@ async function connectToWA() {
     const content = JSON.stringify(mek.message)
     const from = mek.key.remoteJid
 
-    // Always send 'paused' presence update
-    await conn.sendPresenceUpdate('composing', from);
 
     // Always send 'recording' presence update
     await conn.sendPresenceUpdate('recording', from);
