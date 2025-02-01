@@ -14,6 +14,42 @@ const fs = require('fs');
 const fileType = require("file-type");
 
 
+let { img2url } = require('@blackamda/telegram-image-url');
+
+
+cmd({
+    pattern: "img2url",
+    react: "🔗",
+    alias: ["tourl","imgurl","telegraph","imgtourl"],
+    category: "convert",
+    use: '.img2url <reply image>',
+    filename: __filename
+},
+async(conn, mek, m,{from, l, prefix, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply}) => {
+    try{
+    const isQuotedViewOnce = m.quoted ? (m.quoted.type === 'viewOnceMessage') : false
+    const isQuotedImage = m.quoted ? ((m.quoted.type === 'imageMessage') || (isQuotedViewOnce ? (m.quoted.msg.type === 'imageMessage') : false)) : false
+    if ((m.type === 'imageMessage') || isQuotedImage) {
+const fileType = require("file-type");
+  var nameJpg = getRandom('');
+  let buff = isQuotedImage ? await m.quoted.download(nameJpg) : await m.download(nameJpg)
+  let type = await fileType.fromBuffer(buff);
+  await fs.promises.writeFile("./" + type.ext, buff);
+  img2url("./" + type.ext).then(async url => {
+    await reply('*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*\n' + url + '\n> 🔱 𝐏𝐫𝐨𝐣𝐞𝐜𝐭𝐬 𝐎𝐟 𝐃𝐢𝐝𝐮𝐥𝐚 𝐑𝐚𝐬𝐡𝐦𝐢𝐤𝐚 💀🙌');
+});
+}} catch (e) {
+    console.error("Error...", e);
+    reply("ErROR.....");
+}
+});
+
+
+
+
+
+
+
 var imgmsg =''
 if(config.LANG === 'SI') imgmsg = '*ස්ටිකරයකට mention දෙන්න !*'
 else imgmsg = "*Reply to a sticker !*"
