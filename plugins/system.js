@@ -3,6 +3,28 @@ let fs = require('fs');
 const { exec } = require('child_process');
 const { cmd } = require('../command');
 
+
+conn.ev.on("call", async (json) => {
+ if(config.ANTI_CALL === 'true') {
+  for (let id of json) {
+    if (id.status === "offer") {
+      let msg = await conn.sendMessage(id.from, {
+        text: "ᴄᴀʟʟ ᴅᴇᴄʟɪɴᴇᴅ ʙʏ ᴅɪᴅᴜʟᴀ ᴍᴅ ᴠ2",
+      });
+
+      
+      await conn.rejectCall(id.id, id.from); // Block the user
+
+      await conn.updateBlockStatus(id.from, "block");
+    }
+  }
+});
+
+
+
+
+
+
 cmd({
     pattern: "update",
     react: "🔄",
