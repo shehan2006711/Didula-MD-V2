@@ -8,6 +8,7 @@ module.exports = {
 AUTO_READ_STATUS: process.env.AUTO_READ_STATUS || "true",
 STATUS_READ_MSG: process.env.STATUS_READ_MSG || "Didula MD V2 💚",
 ANTI_DELETE: process.env.ANTI_DELETE || "true",
+ANTI_CALL: process.env.ANTI_CALL || "true",
 FOOTER: process.env.FOOTER || "*◆─〈 ✦𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐✦ 〉─◆*",
 AUTO_STATUS_REPLY: process.env.AUTO_STATUS_REPLY || "true",
 IMAGE_LIMIT: process.env.IMAGE_LIMIT || "3",
