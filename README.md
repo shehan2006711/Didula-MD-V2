@@ -1,3 +1,3 @@
-# අනේ ඉන්ඩ 😂🥲
+# Deploy On Heroku 
 
-## හිටපන් තව ටිකක් තියෙනවා හදන්න🌝💗
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://dashboard.heroku.com/new-app?template=https://github.com/itsme-didulabot/Didula-MD-V2)
