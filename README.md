@@ -69,4 +69,4 @@ jobs:
  # send error report 
 
 
-<a href="https://wa.me/+94771820962?text=𝐃𝐢𝐝𝐮𝐥𝐚+𝐌𝐃+𝐕𝟐"><img height= "35" title="Author" src="https://img.shields.io/badge/Send Error Report:-green?style=for-the-badge&logo=render"></a>
+<a href="https://wa.me/+94771820962?text=𝐃𝐢𝐝𝐮𝐥𝐚+𝐌𝐃+𝐕𝟐"><img height= "35" title="Author" src="https://img.shields.io/badge/Send Error Report:-green?style=for-the-badge&logo=whatsapp"></a>
