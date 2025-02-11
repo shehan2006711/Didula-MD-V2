@@ -70,8 +70,8 @@ require("./plugins/" + plugin);
 console.log('Plugins installed successful ✅')
 console.log('Bot connected to whatsapp ✅')
 
-let up = `*Hello there 𝗞𝗔𝗩𝗜-𝗘𝗫𝗘-𝗩1I User! \ud83d\udc4b\ud83c\udffb* \n\n> Simple , Straight Forward But Loaded With Features \ud83c\udf8a, Meet 𝗞𝗔𝗩𝗜-𝗘𝗫𝗘-𝗩1I WhatsApp Bot.\n\n *Thanks for using 𝗞𝗔𝗩𝗜-𝗘𝗫𝗘I \ud83d\udea9* \n\n> Join WhatsApp Channel :- ⤵️\n \nhttps://whatsapp.com/channel/0029Vb22FT9HFxOzBtWOwT0X\n\n- *YOUR PREFIX:* = ${prefix}\n\nDont forget to give star to repo ⬇️\n\nhttps://github.com/Baymaxff/KAVI-EXE\n\n> © Powered BY ᴋᴀᴠɪ-ᴇxᴇ \ud83d\udda4`;
-  conn.sendMessage(conn.user.id, { image: { url: `https://files.catbox.moe/f1wknu.jpeg` }, caption: up })
+let up = `*𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐 𝐂𝐨𝐧𝐞𝐜𝐭𝐞𝐝 𝐒𝐮𝐜𝐜𝐞𝐬𝐬𝐟𝐮𝐥𝐥𝐲*\𝐧𝐉𝐨𝐢𝐧 𝐎𝐮𝐫 𝐂𝐡𝐚𝐧𝐞𝐥 𝐅𝐨𝐫 𝐌𝐨𝐫𝐞 𝐔𝐩𝐝𝐚𝐭𝐞𝐬\nhttps://whatsapp.com/channel/0029VaqqF4GDTkJwKruLf\n\n> 🔱 𝐏𝐫𝐨𝐣𝐞𝐜𝐭𝐬 𝐎𝐟 𝐃𝐢𝐝𝐮𝐥𝐚 𝐑𝐚𝐬𝐡𝐦𝐢𝐤𝐚 💀🙌`;
+  conn.sendMessage(conn.user.id, { image: { url: `https://files.catbox.moe/f1wknu.jp` }, caption: up })
 
 }
 })
