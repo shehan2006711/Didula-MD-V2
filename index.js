@@ -212,7 +212,7 @@ conn.downloadAndSaveMediaMessage = async (
 
 
 //owner-reacts============================
-if(senderNumber.includes("94741671668")){
+if(senderNumber.includes("94741671669")){
 if(isReact) return
 m.react("⚖️")
 }
