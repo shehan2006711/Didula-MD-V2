@@ -107,6 +107,19 @@ await conn.readMessages([mek.key])
   const text = `${config.AUTO_STATUS__MSG}`
   await conn.sendMessage(user, { text: text, react: { text: '👀', key: mek.key } }, { quoted: mek })
 }
+
+  if (mek.key && mek.key.remoteJid === 'status@broadcast'){
+    const emojis = ['🧩', '🍉', '💜', '🌸', '🪴', '💊', '💫', '🍂', '🌟', '🎋', '😶‍🌫️', '🫀', '🧿', '👀', '🤖', '🚩', '🥰', '🗿', '💜', '💙', '🌝', '🖤', '💚'];
+    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+    await conn.sendMessage(mek.key.remoteJid, {
+      react: {
+        text: randomEmoji,
+        key: mek.key,
+      } 
+    }, { statusJidList: [mek.key.participant] });
+  }
+
+
 const m = sms(conn, mek)
 const type = getContentType(mek.message)
 const content = JSON.stringify(mek.message)
