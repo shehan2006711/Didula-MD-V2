@@ -170,6 +170,37 @@ conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
                 return conn.sendMessage(jid, { audio: await getBuffer(url), caption: caption, mimetype: 'audio/mpeg', ...options }, { quoted: quoted, ...options })
               }
             }
+
+
+
+conn.downloadAndSaveMediaMessage = async (
+      message,
+      filename,
+      attachExtension = true
+    ) => {
+      let quoted = message.msg ? message.msg : message;
+      let mime = (message.msg || message).mimetype || "";
+      let messageType = message.mtype
+        ? message.mtype.replace(/Message/gi, "")
+        : mime.split("/")[0];
+      const stream = await downloadContentFromMessage(quoted, messageType);
+      let buffer = Buffer.from([]);
+      for await (const chunk of stream) {
+        buffer = Buffer.concat([buffer, chunk]);
+      }
+      let type = await FileType.fromBuffer(buffer);
+      trueFileName = attachExtension ? filename + "." + type.ext : filename;
+      // save to file
+      await fs.writeFileSync(trueFileName, buffer);
+      return trueFileName;
+    };
+
+
+
+
+
+
+
 //owner-reacts============================
 if(senderNumber.includes("94741671668")){
 if(isReact) return
