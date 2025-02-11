@@ -70,12 +70,11 @@ require("./plugins/" + plugin);
 console.log('Plugins installed successful ✅')
 console.log('Bot connected to whatsapp ✅')
 
-let up = `*𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐 𝐂𝐨𝐧𝐞𝐜𝐭𝐞𝐝 𝐒𝐮𝐜𝐜𝐞𝐬𝐬𝐟𝐮𝐥𝐥𝐲*\𝐧𝐉𝐨𝐢𝐧 𝐎𝐮𝐫 𝐂𝐡𝐚𝐧𝐞𝐥 𝐅𝐨𝐫 𝐌𝐨𝐫𝐞 𝐔𝐩𝐝𝐚𝐭𝐞𝐬\nhttps://whatsapp.com/channel/0029VaqqF4GDTkJwKruLf\n\n> 🔱 𝐏𝐫𝐨𝐣𝐞𝐜𝐭𝐬 𝐎𝐟 𝐃𝐢𝐝𝐮𝐥𝐚 𝐑𝐚𝐬𝐡𝐦𝐢𝐤𝐚 💀🙌`;
-  conn.sendMessage(conn.user.id, { image: { url: `https://files.catbox.moe/f1wknu.jp` }, caption: up })
+let up = `*𝐃𝐢𝐝𝐮𝐥𝐚 𝐌𝐃 𝐕𝟐 𝐂𝐨𝐧𝐞𝐜𝐭𝐞𝐝 𝐒𝐮𝐜𝐜𝐞𝐬𝐬𝐟𝐮𝐥𝐥𝐲*\𝐧𝐉𝐨𝐢𝐧 𝐎𝐮𝐫 𝐂𝐡𝐚𝐧𝐞𝐥 𝐅𝐨𝐫 𝐌𝐨𝐫𝐞 𝐔𝐩𝐝𝐚𝐭𝐞𝐬\nhttps://whatsapp.com/channel/0029VaqqF4GDTkJwKruLSK2f\n\n> 🔱 𝐏𝐫𝐨𝐣𝐞𝐜𝐭𝐬 𝐎𝐟 𝐃𝐢𝐝𝐮𝐥𝐚 𝐑𝐚𝐬𝐡𝐦𝐢𝐤𝐚 💀🙌`;
+  conn.sendMessage(conn.user.id, { image: { url: `https://i.ibb.co/tC37Q7B/20241220-122443.jpg` }, caption: up })
 
 }
 })
-
 
 conn.ev.on("call", async(json) => {
 	  if(config.ANTI_CALL === "true" ) { 
@@ -83,7 +82,7 @@ conn.ev.on("call", async(json) => {
     		if(id.status == "offer") {
     			if(id.isGroup == false) {
     				await conn.sendMessage(id.from, {
-    					text: `⚠️︱Call rejected automaticaly Because owner is busy right now\n❙ 𝗞𝗔𝗩𝗜-𝗘𝗫𝗘-𝗩1 𝗖𝗔𝗟𝗟 𝗥𝗘𝗝𝗘𝗖𝗧𝗘𝗗 🚫✓`, 
+    					text: `⚠️︱Call rejected automaticaly Because owner is busy right now\nDidula MD V2 Rejected Call🚫✓`, 
 							mentions: [id.from]
     				});
     				await conn.rejectCall(id.id, id.from);
@@ -106,7 +105,7 @@ await conn.readMessages([mek.key])
   if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_REPLY === "true"){
   const user = mek.key.participant
   const text = `${config.AUTO_STATUS__MSG}`
-  await conn.sendMessage(user, { text: text, react: { text: '💜', key: mek.key } }, { quoted: mek })
+  await conn.sendMessage(user, { text: text, react: { text: '👀', key: mek.key } }, { quoted: mek })
 }
 const m = sms(conn, mek)
 const type = getContentType(mek.message)
