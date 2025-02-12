@@ -16,7 +16,7 @@ AUTO_RECORDING: process.env.AUTO_RECORDING || "true",
 AUTO_STATUS_REPLY: process.env.AUTO_STATUS_REPLY || "false",
 AUTO_STATUS__MSG: process.env.AUTO_STATUS__MSG || "*SEEN YOUR STATUS BY Didula MD V2*",
 ANTI_CALL: process.env.ANTI_CALL || "false",
-SESSION_ID: process.env.SESSION_ID || "Ai1QBSyR#Nbj64l5I5KGDU-ZyB2zl0Bee4RptoXp8w6B_951Tw7U",
+SESSION_ID: process.env.SESSION_ID || "",
 ALIVE_REACT: process.env.ALIVE_REACT || "⚠️",
 };
 
